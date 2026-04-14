@@ -1,10 +1,14 @@
+import SampleData from "@/assets/sample_data";
 import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
+import ThemeContext from "@/contexts/ThemeContext";
+import { useNavigation } from "@react-navigation/native";
 import React from 'react';
 import { KeyboardAvoidingView,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignIn = () => {
+    const navigator = useNavigation();
     const {
         screenWidth,
         screenHeight,
@@ -14,7 +18,18 @@ const SignIn = () => {
         password,
         setEmail,
         setPassword,
+        signIn,
     } = React.useContext(AuthContext);
+    const {
+        color,
+        setColor,
+    } = React.useContext(ThemeContext);
+    const [signInMessage,setSignInMessage] = React.useState("");
+
+    function validateCredentials(email: string,password: string) : boolean
+    {
+        return ((email === SampleData.email) && (password === SampleData.password))
+    }
 
     return (
         <SafeAreaView
@@ -22,6 +37,7 @@ const SignIn = () => {
                 flex: 1,
                 width: screenWidth,
                 height: screenHeight,
+                backgroundColor: color,
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -83,6 +99,15 @@ const SignIn = () => {
                             ...Styles.inputBox,
                         }}
                     />
+                    {(signInMessage.length > 0) ? (
+                        <Text
+                            style={{
+                                
+                            }}
+                        >{signInMessage}</Text>
+                    ) : (
+                        <View></View>
+                    )}
                     <TouchableOpacity
                         style={{
                             borderWidth: 2,
@@ -94,11 +119,24 @@ const SignIn = () => {
                             paddingBottom: 4,
                         }}
                         onPress={() => {
-                            
+                            if (validateCredentials(email, password) === true)
+                            {
+                                setSignInMessage("Signed in successfully!");
+                                setEmail(email);
+                                setPassword(password);
+                                navigator.navigate("ApplicationBottomNavigationTab" as never);
+                                signIn("abcd");
+                            }
+                            else
+                            {
+                                setSignInMessage("Invalid credential(s)!");
+                            }
                         }}
                     >
                         <Text
-                            style={{}}
+                            style={{
+                                
+                            }}
                         >{"SIGN IN"}</Text>
                     </TouchableOpacity>
                 </View>

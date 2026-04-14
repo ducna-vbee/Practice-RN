@@ -1,3 +1,4 @@
+import ThemeContext from "@/contexts/ThemeContext";
 import React from "react";
 import { GestureResponderEvent,Image,Text,TouchableOpacity,View } from "react-native";
 
@@ -29,6 +30,11 @@ const Counter = () => {
 	const handlePressStably = React.useCallback(() => {
 		console.log("Pressed");
 	},[]);
+
+	const {
+		tabBarHiddenState,
+		setTabBarHiddenState
+	} = React.useContext(ThemeContext);
 
 	const [state,dispatch] = React.useReducer((state: { count: number; tick: number },action: any): { count: number; tick: number } => {
 		switch (action.type)
@@ -174,7 +180,26 @@ const Counter = () => {
 						display: "flex",
 						flexDirection: "column",
 						justifyContent: "center",
-						alignContent: "center",
+						alignItems: "center",
+					}}
+					onPress={() => {
+						setTabBarHiddenState(true);
+					}}
+				>
+					<Text>{"Hide Tab"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						borderWidth: 2,
+						borderRadius: 100,
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+						alignItems: "center",
 					}}
 					onPress={() => {
 						dispatch({ type: ACTIONS.INCREMENT });
