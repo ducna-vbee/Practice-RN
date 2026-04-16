@@ -1,8 +1,11 @@
+import { Colors } from '@/constants/theme';
 import React from 'react';
 
 const ThemeContext = React.createContext({
-    color: '#FFFFFF',
-    setColor: (value: React.SetStateAction<string>) => {},
+    backgroundColor: Colors.light.background,
+    setBackgroundColor: (value: React.SetStateAction<string>) => {},
+    textColor: Colors.light.text,
+    setTextColor: (value: React.SetStateAction<string>) => {},
     tabBarHiddenState: false,
     setTabBarHiddenState: (value: React.SetStateAction<boolean>) => {},
 });

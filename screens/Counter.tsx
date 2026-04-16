@@ -1,229 +1,131 @@
 import ThemeContext from "@/contexts/ThemeContext";
 import React from "react";
-import { GestureResponderEvent,Image,Text,TouchableOpacity,View } from "react-native";
+import { DimensionValue,Image,Text,TouchableOpacity,View } from "react-native";
 
-
-const ExpensiveBigList = ({ onPress }: { onPress: ((event: GestureResponderEvent) => void) | undefined }) => {
-	console.log("Big List Rendered!");
-
+const HeavyImage = ({size} : {size: DimensionValue}) => {
 	return (
-		<TouchableOpacity onPress={onPress}>
-			<Text>I am a big list</Text>
+		<View
+			style={{
+				flex: 1,
+				width: '100%',
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column',
+				justifyContent: 'center',
+				alignItems: 'center',
+			}}
+		>
 			<Image
-				source={require("../assets/images/android-icon-foreground.png")}
+				source={require("../assets/images/splash-icon.png")}
 				style={{
-					width: 800,
-					height: 800,
+					width: size,
+					height: size,
 				}}
 			/>
-		</TouchableOpacity>
+		</View>
 	);
 };
 
+const MemorizedHeavyImage = React.memo(HeavyImage);
+
 const Counter = () => {
-	const ACTIONS = {
-		INCREMENT: "increment",
-	};
-
-	const handlePress = () => console.log("Pressed");
-
-	const handlePressStably = React.useCallback(() => {
-		console.log("Pressed");
-	},[]);
-
+	const [counter,setCounter] = React.useState(0);
+	const [content, setState] = React.useState("abcd");
 	const {
-		tabBarHiddenState,
-		setTabBarHiddenState
+		backgroundColor,
+		textColor,
 	} = React.useContext(ThemeContext);
 
-	const [state,dispatch] = React.useReducer((state: { count: number; tick: number },action: any): { count: number; tick: number } => {
-		switch (action.type)
-		{
-		case ACTIONS.INCREMENT:
-			{
-				return {
-					count: state.count + 1,
-					tick: Date.now(),
-				};
-			}
-		default:
-			{
-				return state;
-			}
+	React.useEffect(() => {
+		const interval = setInterval(() => {
+            setCounter(counter + 1);
+        }, 1000);
+
+        return () => {
+			clearInterval(interval);
 		}
-	},{
-		count: 0,
-		tick: 0,
-	});
-
-	function checkPrimality(input: number): boolean {
-		if (input < 1)
-		{
-			return false;
-		}
-		else
-		{
-			let i = 0;
-
-			for (i = 2; i < input / 2; i++)
-			{
-				if (input % i === 0)
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-	}
-
-	const primenessOfCount = React.useMemo(() => {
-		console.log("Checking primality...");
-
-		return checkPrimality(state.count);
-	},[state.count]);
-
-
-	const buttonViewReference: React.RefObject<View | null> = React.useRef<View>(null);
+	},[counter]);
 
 	React.useEffect(() => {
-		console.log("Counter initialized to `" + state.count.toString() + "`.");
+		console.log("Re-rendered Counter screen!");
 	},[]);
-
-	React.useEffect(() => {
-		console.log("Counter increased to `" + state.count.toString() + "`.");
-
-		return () => {
-			console.log("Counter stopped at `" + state.count.toString() + "`.");
-		};
-	},[state.count]);
 
 	return (
 		<View
 			style={{
-				width: "100%",
-				height: "100%",
-				display: "flex",
 				flex: 1,
+				width: "100%",
+				height: '100%',
+				backgroundColor: backgroundColor,
+				display: "flex",
 				flexDirection: "column",
-				justifyContent: "center",
-				alignContent: "space-evenly",
+				justifyContent: 'space-evenly',
+				alignItems: 'center',
 			}}
 		>
+			<Text
+				style={{
+					fontSize: 16,
+					color: textColor,
+				}}
+			>{("Text: " + content)}</Text>
 			<View
 				style={{
-					width: "100%",
-					height: "100%",
-					display: "flex",
 					flex: 1,
-					flexDirection: "row",
-					justifyContent: "center",
+					width: '100%',
+					height: '100%',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'space-evenly',
+					alignItems: 'center',
+					gap: 40,
 				}}
 			>
-				<Text>
-					{"Counter:"}
-					{state.count}
-				</Text>
-			</View>
-			<View
-				style={{
-					width: "100%",
-					height: "100%",
-					display: "flex",
-					flex: 1,
-					flexDirection: "row",
-					justifyContent: "center",
-				}}
-			>
-				<Text>
-					{"System ticks:"}
-					{state.tick}
-				</Text>
-			</View>
-			<View
-				style={{
-					width: "100%",
-					height: "100%",
-					display: "flex",
-					flex: 1,
-					flexDirection: "row",
-					justifyContent: "center",
-				}}
-			>
-				<Text>Count being prime: {primenessOfCount ? "Yes" : "No"}</Text>
-
-				<ExpensiveBigList onPress={handlePress} />
-
-				<ExpensiveBigList onPress={handlePressStably} />
-			</View>
-
-			<View
-				ref={buttonViewReference}
-				style={{
-					width: "100%",
-					height: "100%",
-					display: "flex",
-					flex: 4,
-					flexDirection: "column",
-					justifyContent: "center",
-					alignContent: "center",
-				}}
-			>
+				<Text
+					style={{
+						fontSize: 16,
+						color: textColor,
+					}}
+				>{("Elapsed time: " + counter.toString() + "s")}</Text>
 				<TouchableOpacity
 					style={{
 						borderWidth: 2,
-						borderRadius: 100,
+						borderRadius: 1000,
 						paddingLeft: 16,
 						paddingRight: 16,
-						paddingTop: 4,
-						paddingBottom: 4,
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-						alignItems: "center",
+						paddingTop: 8,
+						paddingBottom: 8,
 					}}
 					onPress={() => {
-						setTabBarHiddenState(true);
-					}}
-				>
-					<Text>{"Hide Tab"}</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={{
-						borderWidth: 2,
-						borderRadius: 100,
-						paddingLeft: 16,
-						paddingRight: 16,
-						paddingTop: 4,
-						paddingBottom: 4,
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-					onPress={() => {
-						dispatch({ type: ACTIONS.INCREMENT });
-
-						if (buttonViewReference.current !== null)
-						{
-							buttonViewReference.current.measure(
-								(x,y,width,height,pageX,pageY) => {
-									console.log(
-										`Button pressed at screen position: ${pageX}, ${pageY}`,
-									);
-								},
-							);
-						}
+						setCounter(counter + 1);
+						setState(content + "abcd");
 					}}
 				>
 					<Text
 						style={{
 							fontSize: 16,
+							color: textColor,
 						}}
-					>
-						{"Count"}
-					</Text>
+					>{"Increment Counter"}</Text>
 				</TouchableOpacity>
+				<View
+					style={{
+						flex: 1,
+						width: '100%',
+						height: '100%',
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						justifyContent: 'space-evenly',
+					}}
+				>
+					<MemorizedHeavyImage
+						size={400}
+					/>
+					<HeavyImage
+						size={400}
+					/>
+				</View>
 			</View>
 		</View>
 	);

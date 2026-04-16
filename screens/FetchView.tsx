@@ -1,5 +1,4 @@
 import React from 'react';
-import { TextInput,View } from 'react-native';
 
 function useFetch<T>(url: string)
 {
@@ -36,28 +35,3 @@ function useFetch<T>(url: string)
 
     return { data,loading: loadingState,error };
 };
-
-const FetchView = () => {
-    const referenceToTextInput1 = React.useRef<TextInput>(null);
-    const referenceToTextInput2 = React.useRef<TextInput>(null);
- 
-
-    return (
-        <View>
-            <TextInput
-                ref={referenceToTextInput1}
-                onFocus={(event) => {
-                    referenceToTextInput2.current?.blur();
-                }}
-            />
-            <TextInput
-                ref={referenceToTextInput2}
-                onFocus={(event) => {
-                    referenceToTextInput1.current?.blur();
-                }}
-            />
-        </View>
-    );
-};
-
-export default FetchView;

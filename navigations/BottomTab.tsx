@@ -16,18 +16,6 @@ const ApplicationBottomNavigationTab = () => {
         tabBarHiddenState
     } = React.useContext(ThemeContext);
 
-    // if (tabBarHiddenState === true)
-    // {
-        
-    // }
-    // else
-    // {
-    //     return (
-    //         <View>
-
-    //         </View>
-    //     );
-    // }
     return (
         <ApplicationBottomTabNavigator.Navigator
             backBehavior={(userToken !== null) ? "none" : "history"}    

@@ -1,14 +1,11 @@
 import SampleData from "@/assets/sample_data";
 import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
-import ThemeContext from "@/contexts/ThemeContext";
-import { useNavigation } from "@react-navigation/native";
 import React from 'react';
 import { KeyboardAvoidingView,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignIn = () => {
-    const navigator = useNavigation();
     const {
         screenWidth,
         screenHeight,
@@ -20,10 +17,6 @@ const SignIn = () => {
         setPassword,
         signIn,
     } = React.useContext(AuthContext);
-    const {
-        color,
-        setColor,
-    } = React.useContext(ThemeContext);
     const [signInMessage,setSignInMessage] = React.useState("");
 
     function validateCredentials(email: string,password: string) : boolean
@@ -37,7 +30,7 @@ const SignIn = () => {
                 flex: 1,
                 width: screenWidth,
                 height: screenHeight,
-                backgroundColor: color,
+                backgroundColor: '#ff9900',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -45,7 +38,7 @@ const SignIn = () => {
             }}
         >
             <KeyboardAvoidingView
-                behavior='height'
+                behavior='padding'
                 enabled={true}
                 style={{
                     flex: 1,
@@ -53,7 +46,7 @@ const SignIn = () => {
                     height: screenHeight,
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'center',
+                    justifyContent: 'space-evenly',
                     alignItems: 'center',
                 }}
             >
@@ -66,7 +59,13 @@ const SignIn = () => {
                         },
                     }}
                 >
-
+                    <Text
+                        style={{
+                            color: '#FFFFFF',
+                            fontSize: 32,
+                            fontWeight: 800,
+                        }}
+                    >{"Sign In"}</Text>
                 </View>
                 <View
                     style={{
@@ -88,21 +87,27 @@ const SignIn = () => {
                         style={{
                             ...Styles.inputBox,
                         }}
+                        placeholderTextColor={'#e0e0e0'}
+                        onEndEditing={() => {
+                            
+                        }}
                     />
                     <TextInput
                         value={password}
                         placeholder="Password"
+                        secureTextEntry={true}
                         onChange={(event: TextInputChangeEvent) => {
                             setPassword(event.nativeEvent.text);
                         }}
                         style={{
                             ...Styles.inputBox,
                         }}
+                        placeholderTextColor={'#e0e0e0'}
                     />
                     {(signInMessage.length > 0) ? (
                         <Text
                             style={{
-                                
+                                color: '#ff0000'
                             }}
                         >{signInMessage}</Text>
                     ) : (
@@ -111,12 +116,12 @@ const SignIn = () => {
                     <TouchableOpacity
                         style={{
                             borderWidth: 2,
-                            borderColor: '#0F0F0F',
+                            borderColor: '#FFFFFF',
                             borderRadius: 1000,
                             paddingLeft: 16,
                             paddingRight: 16,
-                            paddingTop: 4,
-                            paddingBottom: 4,
+                            paddingTop: 8,
+                            paddingBottom: 8,
                         }}
                         onPress={() => {
                             if (validateCredentials(email, password) === true)
@@ -124,7 +129,6 @@ const SignIn = () => {
                                 setSignInMessage("Signed in successfully!");
                                 setEmail(email);
                                 setPassword(password);
-                                navigator.navigate("ApplicationBottomNavigationTab" as never);
                                 signIn("abcd");
                             }
                             else
@@ -135,7 +139,8 @@ const SignIn = () => {
                     >
                         <Text
                             style={{
-                                
+                                fontSize: 18,
+                                color: '#FFFFFF',
                             }}
                         >{"SIGN IN"}</Text>
                     </TouchableOpacity>
@@ -168,7 +173,10 @@ const Styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         maxHeight: 50,
-        color: '#0F0F0F',
+        borderColor: '#FFFFFF',
+        color: '#FFFFFF',
+        shadowColor: '#0F0F0F',
+        shadowOpacity: 0.8,
         fontSize: 13,
         borderWidth: 2,
         borderRadius: 1000,
