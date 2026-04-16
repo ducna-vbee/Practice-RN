@@ -1,8 +1,9 @@
 import ThemeContext from "@/contexts/ThemeContext";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { DimensionValue,Image,Text,TouchableOpacity,View } from "react-native";
 
-const HeavyImage = ({size} : {size: DimensionValue}) => {
+const HeavyImage = ({ size }: { size: DimensionValue }) => {
 	return (
 		<View
 			style={{
@@ -30,7 +31,9 @@ const MemorizedHeavyImage = React.memo(HeavyImage);
 
 const Counter = () => {
 	const [counter,setCounter] = React.useState(0);
-	const [content, setState] = React.useState("abcd");
+	const [content,setState] = React.useState("abcd");
+	const navigator = useNavigation();
+	
 	const {
 		backgroundColor,
 		textColor,
@@ -38,13 +41,28 @@ const Counter = () => {
 
 	React.useEffect(() => {
 		const interval = setInterval(() => {
-            setCounter(counter + 1);
-        }, 1000);
+			setCounter(counter + 1);
+		},1000);
 
-        return () => {
+		return () => {
 			clearInterval(interval);
 		}
 	},[counter]);
+
+	React.useEffect(() => {
+		const unsubscribeFocus = navigator.addListener('focus',() => {
+			console.log('Screen is active - Start Timer');
+		});
+
+		const unsubscribeBlur = navigator.addListener('blur',() => {
+			console.log('Screen is background - Pause Timer');
+		});
+
+		return () => {
+			unsubscribeFocus();
+			unsubscribeBlur();
+		};
+	},[navigator]);
 
 	React.useEffect(() => {
 		console.log("Re-rendered Counter screen!");

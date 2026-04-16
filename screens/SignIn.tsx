@@ -1,11 +1,13 @@
 import SampleData from "@/assets/sample_data";
 import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
+import { useNavigation } from "@react-navigation/native";
 import React from 'react';
-import { KeyboardAvoidingView,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
+import { Alert,KeyboardAvoidingView,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignIn = () => {
+    const navigator = useNavigation();
     const {
         screenWidth,
         screenHeight,
@@ -19,10 +21,27 @@ const SignIn = () => {
     } = React.useContext(AuthContext);
     const [signInMessage,setSignInMessage] = React.useState("");
 
-    function validateCredentials(email: string,password: string) : boolean
-    {
+    function validateCredentials(email: string,password: string): boolean {
         return ((email === SampleData.email) && (password === SampleData.password))
     }
+
+    navigator.addListener('beforeRemove',(event) => {
+        // Prevent default behavior (stopping the navigation)
+        event.preventDefault();
+
+        Alert.alert(
+            'Discard changes?',
+            'You have unsaved changes. Are you sure you want to leave?',
+            [
+                { text: "Don't leave",style: 'cancel',onPress: () => { } },
+                {
+                    text: 'Discard',
+                    style: 'destructive',
+                    onPress: () => navigator.dispatch(event.data.action),
+                },
+            ]
+        );
+    });
 
     return (
         <SafeAreaView
@@ -89,7 +108,7 @@ const SignIn = () => {
                         }}
                         placeholderTextColor={'#e0e0e0'}
                         onEndEditing={() => {
-                            
+
                         }}
                     />
                     <TextInput
@@ -124,7 +143,7 @@ const SignIn = () => {
                             paddingBottom: 8,
                         }}
                         onPress={() => {
-                            if (validateCredentials(email, password) === true)
+                            if (validateCredentials(email,password) === true)
                             {
                                 setSignInMessage("Signed in successfully!");
                                 setEmail(email);

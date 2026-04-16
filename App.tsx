@@ -20,10 +20,11 @@ import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
+import RootStackParamList from './screens/RootStackParamList';
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
 
-const ApplicationScreenNavigationStack = createNativeStackNavigator();
+const ApplicationScreenNavigationStack = createNativeStackNavigator<RootStackParamList>();
 const ApplicationNavigationDrawerShell = createDrawerNavigator();
 
 
