@@ -1,22 +1,15 @@
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
+import { SampleJSONData,SampleJSONDataServices } from "@/services/SampleJSONDataServices";
 import React from 'react';
 import { ActivityIndicator,FlatList,ScrollView,Text,TouchableOpacity,View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-interface SampleDataInterface
-{
-    userId: number,
-    id: number,
-    title: string,
-    body: string,
-};
-
 const ListView = () => {
     const screenDimensionContext = React.useContext(ScreenDimensionContext);
-    const dataSampleURL: string = "https://jsonplaceholder.typicode.com/posts";
-    const [data,setData] = React.useState({});
+    const [data,setData] = React.useState<SampleJSONData[]>([]);
     const [fetchState,setFetchState] = React.useState(false);
+    const [error,setError] = React.useState<string|null>(null);
 
     async function fetchData(url: string)
     {
@@ -38,15 +31,32 @@ const ListView = () => {
         });
     }
 
+    async function fetchDataWithServices()
+    {
+        try
+        {
+            const sampleJSONData = await SampleJSONDataServices.fetch();
+            setData(sampleJSONData);
+        }
+        catch (error: any)
+        {
+            setError(JSON.stringify(error));
+        }
+        finally
+        {
+            setFetchState(false);
+        }
+    }
+
     React.useEffect(() => {
-        fetchData(dataSampleURL);
-        console.log("Fetched data again!");
+        //fetchData(dataSampleURL);
+        fetchDataWithServices();
     },[]);
 
     const DataList = () => {
         return (
             <FlatList
-                data={Array.from(data as SampleDataInterface[])}
+                data={data}
                 keyExtractor={(item) => (item.id).toString()}
                 renderItem={({item}) => {
                     return (
@@ -189,7 +199,8 @@ const ListView = () => {
                         borderColor: '#0F0F0F',
                     }}
                     onPress={() => {
-                        fetchData(dataSampleURL);
+                        //fetchData(dataSampleURL);
+                        fetchDataWithServices();
                     }}
                 >
                     <Text
