@@ -1,6 +1,6 @@
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
 import React from 'react';
-import { FlatList,ScrollView,Text,TouchableOpacity,View } from 'react-native';
+import { ActivityIndicator,FlatList,ScrollView,Text,TouchableOpacity,View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -16,9 +16,12 @@ const ListView = () => {
     const screenDimensionContext = React.useContext(ScreenDimensionContext);
     const dataSampleURL: string = "https://jsonplaceholder.typicode.com/posts";
     const [data,setData] = React.useState({});
+    const [fetchState,setFetchState] = React.useState(false);
 
     async function fetchData(url: string)
     {
+        setFetchState(true);
+
         await fetch(url,{
             method: 'GET',
             mode: 'cors',
@@ -30,11 +33,14 @@ const ListView = () => {
             setData(jsonResponse);
         }).catch((error) => {
             setData(error);
+        }).finally(() => {
+            setFetchState(false);
         });
     }
 
     React.useEffect(() => {
         fetchData(dataSampleURL);
+        console.log("Fetched data again!");
     },[]);
 
     const DataList = () => {
@@ -155,7 +161,11 @@ const ListView = () => {
                     alignItems: 'center',
                 }}
             >
-                <DataList/>
+                {(fetchState === true) ? (
+                    <ActivityIndicator/>
+                ) : (
+                    <DataList/>
+                )}
             </View>
             <View
                 style={{

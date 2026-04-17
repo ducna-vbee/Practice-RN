@@ -4,6 +4,10 @@ import React from "react";
 import { DimensionValue,Image,Text,TouchableOpacity,View } from "react-native";
 
 const HeavyImage = ({ size }: { size: DimensionValue }) => {
+	React.useEffect(() => {
+        console.log("`HeavyImage` is re-rendered!");
+    });
+
 	return (
 		<View
 			style={{
@@ -31,7 +35,6 @@ const MemorizedHeavyImage = React.memo(HeavyImage);
 
 const Counter = () => {
 	const [counter,setCounter] = React.useState(0);
-	const [content,setState] = React.useState("abcd");
 	const navigator = useNavigation();
 	
 	const {
@@ -64,10 +67,6 @@ const Counter = () => {
 		};
 	},[navigator]);
 
-	React.useEffect(() => {
-		console.log("Re-rendered Counter screen!");
-	},[]);
-
 	return (
 		<View
 			style={{
@@ -81,12 +80,6 @@ const Counter = () => {
 				alignItems: 'center',
 			}}
 		>
-			<Text
-				style={{
-					fontSize: 16,
-					color: textColor,
-				}}
-			>{("Text: " + content)}</Text>
 			<View
 				style={{
 					flex: 1,
@@ -116,7 +109,6 @@ const Counter = () => {
 					}}
 					onPress={() => {
 						setCounter(counter + 1);
-						setState(content + "abcd");
 					}}
 				>
 					<Text
