@@ -1,6 +1,7 @@
 import AuthContext from "@/contexts/AuthContext";
 import ThemeContext from "@/contexts/ThemeContext";
 import Counter from "@/screens/Counter";
+import Flexible from "@/screens/Flexible";
 import ImageView from "@/screens/ImageView";
 import ImmutableCounterView from "@/screens/ImmutableCounterView";
 import ListView from "@/screens/ListView";
@@ -72,6 +73,15 @@ const ApplicationBottomNavigationTab = () => {
             <ApplicationBottomTabNavigator.Screen
                 name="MutableContextView"
                 component={MutableContextView}
+                options={{
+                    //tabBarIcon: require("../assets/images/splash-icon.png"),
+                    headerShown: false,
+                    tabBarBadge: 1,
+                }}
+            />
+            <ApplicationBottomTabNavigator.Screen
+                name="Flexible"
+                component={Flexible}
                 options={{
                     //tabBarIcon: require("../assets/images/splash-icon.png"),
                     headerShown: false,
