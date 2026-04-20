@@ -26,7 +26,7 @@ const ReferenceView = () => {
     const [counter,setCounter] = React.useState(0);
     const reference = React.useRef(null);
     const [componentExistence,setComponentExistence] = React.useState(true);
-    const locallyPersistentReference = createReferencePersistently();
+    const locallyPersistentReference = null;//createReferencePersistently();
 
     React.useEffect(() => {
         const interval = setInterval(() => {

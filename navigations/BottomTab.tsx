@@ -1,5 +1,6 @@
 import AuthContext from "@/contexts/AuthContext";
 import ThemeContext from "@/contexts/ThemeContext";
+import AndroidKeyboardAvoidingView from "@/screens/AndroidKeyboardAvoidingView";
 import Counter from "@/screens/Counter";
 import ImageView from "@/screens/ImageView";
 import ListView from "@/screens/ListView";
@@ -52,6 +53,15 @@ const ApplicationBottomNavigationTab = () => {
             <ApplicationBottomTabNavigator.Screen
                 name="ReferenceView"
                 component={ReferenceView}
+                options={{
+                    //tabBarIcon: require("../assets/images/splash-icon.png"),
+                    headerShown: false,
+                    tabBarBadge: 1,
+                }}
+            />
+            <ApplicationBottomTabNavigator.Screen
+                name="AndroidKeyboardAvoidingView"
+                component={AndroidKeyboardAvoidingView}
                 options={{
                     //tabBarIcon: require("../assets/images/splash-icon.png"),
                     headerShown: false,

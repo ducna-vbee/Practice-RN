@@ -1,7 +1,7 @@
 import ThemeContext from "@/contexts/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
+import { Animated,Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
 
 
 const Counter = () => {
@@ -23,6 +23,23 @@ const Counter = () => {
 			clearInterval(interval);
 		}
 	},[counter]);
+
+	const opacityAnimation = React.useRef(new Animated.Value(1)).current;
+ 
+	const fadeIn = () => {
+		Animated.timing(opacityAnimation, {
+			toValue: 0.1,
+			duration: 100,
+			useNativeDriver: true,
+		}).start();
+	};
+	const fadeOut = () => {
+		Animated.timing(opacityAnimation, {
+			toValue: 1,
+			duration: 200,
+			useNativeDriver: true,
+		}).start();
+	};
 
 	React.useEffect(() => {
 		// const unsubscribeFocus = navigator.addListener('focus',() => {
@@ -113,26 +130,31 @@ const Counter = () => {
 					>{"Increment Counter"}</Text>
 				</TouchableOpacity>
 				<Pressable
-					style={{
-						backgroundColor: '#929292',
-						width: 100,
-						height: 50,
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-						borderRadius: 1000,
-						opacity: 0.1,
-					}}
 					onPress={() => {
 						console.log("Pressed!");
 					}}
+					onPressIn={fadeIn}
+					onPressOut={fadeOut}
 				>
-					<Text
+					<Animated.View
 						style={{
-							color: '#FFFFFF'
+							backgroundColor: '#929292',
+							width: 100,
+							height: 50,
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center',
+							borderRadius: 1000,
+							opacity: opacityAnimation,
 						}}
-					>{"Pressable"}</Text>
+					>
+						<Text
+							style={{
+								color: '#FFFFFF'
+							}}
+						>{"Pressable"}</Text>
+					</Animated.View>
 				</Pressable>
 				<View
 					style={{

@@ -1,5 +1,5 @@
 import React from "react";
-import { DimensionValue,Image,View,} from "react-native";
+import { DimensionValue,Image,View } from "react-native";
 
 const HeavyImage = ({ size }: { size: DimensionValue }) => {
 	React.useEffect(() => {
