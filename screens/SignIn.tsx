@@ -20,8 +20,11 @@ const SignIn = () => {
         signIn,
     } = React.useContext(AuthContext);
     const [signInMessage,setSignInMessage] = React.useState("");
+    const referenceToInputBox1 = React.useRef<TextInput|null>(null);
+    const referenceToInputBox2 = React.useRef<TextInput|null>(null);
 
-    function validateCredentials(email: string,password: string): boolean {
+    function validateCredentials(email: string,password: string): boolean
+    {
         return ((email === SampleData.email) && (password === SampleData.password))
     }
 
@@ -97,6 +100,7 @@ const SignIn = () => {
                     }}
                 >
                     <TextInput
+                        ref={referenceToInputBox1}
                         value={email}
                         placeholder="Email"
                         onChange={(event: TextInputChangeEvent) => {
@@ -107,10 +111,12 @@ const SignIn = () => {
                         }}
                         placeholderTextColor={'#e0e0e0'}
                         onEndEditing={() => {
-
+                            referenceToInputBox1.current?.blur();
+                            referenceToInputBox2.current?.focus();
                         }}
                     />
                     <TextInput
+                        ref={referenceToInputBox2}
                         value={password}
                         placeholder="Password"
                         secureTextEntry={true}
@@ -121,6 +127,9 @@ const SignIn = () => {
                             ...Styles.inputBox,
                         }}
                         placeholderTextColor={'#e0e0e0'}
+                        onEndEditing={() => {
+                            referenceToInputBox2.current?.blur();
+                        }}
                     />
                     {(signInMessage.length > 0) ? (
                         <Text
