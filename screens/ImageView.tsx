@@ -1,5 +1,5 @@
 import React from "react";
-import { DimensionValue,Image,View } from "react-native";
+import { DimensionValue,Image,StyleProp,View,ViewStyle } from "react-native";
 
 const HeavyImage = ({ size }: { size: DimensionValue }) => {
 	React.useEffect(() => {
@@ -43,18 +43,38 @@ const HeavyImage = ({ size }: { size: DimensionValue }) => {
 
 const MemorizedHeavyImage = React.memo(HeavyImage);
 
+function createTopLevelStyle()
+{
+	console.log("Top-level style re-created!");
+
+	return {
+		width: '100%',
+		height: '100%',
+		borderWidth: 2,
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+	};
+}
+
 const ImageView = () => {
+	const topLevelStyle = createTopLevelStyle();
+	const [count,setCount] = React.useState(0);
+
+	React.useEffect(() => {
+		const interval = setInterval(() => {
+			setCount(count + 1);
+		},1000);
+
+		return () => {
+			clearInterval(interval);
+		};
+	},[count]);
+
     return (
         <View
-            style={{
-                width: '100%',
-                height: '100%',
-                borderWidth: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}
+            style={topLevelStyle as StyleProp<ViewStyle>}
         >
             <MemorizedHeavyImage
                 size={100}

@@ -1,9 +1,10 @@
 import AuthContext from "@/contexts/AuthContext";
 import ThemeContext from "@/contexts/ThemeContext";
-import AndroidKeyboardAvoidingView from "@/screens/AndroidKeyboardAvoidingView";
 import Counter from "@/screens/Counter";
 import ImageView from "@/screens/ImageView";
+import ImmutableCounterView from "@/screens/ImmutableCounterView";
 import ListView from "@/screens/ListView";
+import MutableContextView from "@/screens/MutableContext";
 import ReferenceView from "@/screens/ReferenceView";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from "react";
@@ -60,8 +61,17 @@ const ApplicationBottomNavigationTab = () => {
                 }}
             />
             <ApplicationBottomTabNavigator.Screen
-                name="AndroidKeyboardAvoidingView"
-                component={AndroidKeyboardAvoidingView}
+                name="ImmutableCounterView"
+                component={ImmutableCounterView}
+                options={{
+                    //tabBarIcon: require("../assets/images/splash-icon.png"),
+                    headerShown: false,
+                    tabBarBadge: 1,
+                }}
+            />
+            <ApplicationBottomTabNavigator.Screen
+                name="MutableContextView"
+                component={MutableContextView}
                 options={{
                     //tabBarIcon: require("../assets/images/splash-icon.png"),
                     headerShown: false,

@@ -48,6 +48,7 @@ const Settings = () => {
                         <Switch
                             value={darkModeUsage}
                             thumbColor={'#0F0F0F'}
+                            
                             onValueChange={(newValue: boolean) => {
                                 setDarkModeUsage(newValue);
                             }}
