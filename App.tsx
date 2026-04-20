@@ -110,8 +110,9 @@ const App = () => {
 						>
 							<StatusBar
 								animated={true}
-								hidden={true}
+								//hidden={true}
 								translucent={true}
+								backgroundColor={'#aaaaaa'}
 							/>
 							<NavigationContainer
 								linking={linking}

@@ -26,7 +26,6 @@ const SignIn = () => {
     }
 
     navigator.addListener('beforeRemove',(event) => {
-        // Prevent default behavior (stopping the navigation)
         event.preventDefault();
 
         Alert.alert(

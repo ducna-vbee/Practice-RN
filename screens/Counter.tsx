@@ -1,40 +1,12 @@
 import ThemeContext from "@/contexts/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { DimensionValue,Image,Text,TouchableOpacity,View } from "react-native";
+import { Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
 
-const HeavyImage = ({ size }: { size: DimensionValue }) => {
-	React.useEffect(() => {
-        console.log("`HeavyImage` is re-rendered!");
-    });
-
-	return (
-		<View
-			style={{
-				flex: 1,
-				width: '100%',
-				height: '100%',
-				display: 'flex',
-				flexDirection: 'column',
-				justifyContent: 'center',
-				alignItems: 'center',
-			}}
-		>
-			<Image
-				source={require("../assets/images/splash-icon.png")}
-				style={{
-					width: size,
-					height: size,
-				}}
-			/>
-		</View>
-	);
-};
-
-const MemorizedHeavyImage = React.memo(HeavyImage);
 
 const Counter = () => {
 	const [counter,setCounter] = React.useState(0);
+	const [email,setEmail] = React.useState("");
 	const navigator = useNavigation();
 	
 	const {
@@ -53,19 +25,41 @@ const Counter = () => {
 	},[counter]);
 
 	React.useEffect(() => {
-		const unsubscribeFocus = navigator.addListener('focus',() => {
-			console.log('Screen is active - Start Timer');
-		});
+		// const unsubscribeFocus = navigator.addListener('focus',() => {
+		// 	console.log('Screen is active - Start Timer');
+		// });
 
-		const unsubscribeBlur = navigator.addListener('blur',() => {
-			console.log('Screen is background - Pause Timer');
-		});
+		// const unsubscribeBlur = navigator.addListener('blur',() => {
+		// 	console.log('Screen is background - Pause Timer');
+		// });	
 
-		return () => {
-			unsubscribeFocus();
-			unsubscribeBlur();
-		};
+		// return () => {
+		// 	unsubscribeFocus();
+		// 	unsubscribeBlur();
+		// };
 	},[navigator]);
+
+	const verifyEmail = React.useCallback((value: string,verbose: boolean) => {
+		if (verbose === true)
+		{
+			console.log("`email` is verified: " + email);
+		}
+
+		const emailRegularExpression: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+		return emailRegularExpression.test(value);
+	},[email]);
+
+	const validateEmail: boolean = React.useMemo(() => {
+		const validity = verifyEmail(email,false);
+
+		if (validity === true)
+		{
+			console.log("`email` is valid: " + email);
+		}
+		
+		return validity;
+	},[verifyEmail, email]);
 
 	return (
 		<View
@@ -118,23 +112,67 @@ const Counter = () => {
 						}}
 					>{"Increment Counter"}</Text>
 				</TouchableOpacity>
+				<Pressable
+					style={{
+						backgroundColor: '#929292',
+						width: 100,
+						height: 50,
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+						borderRadius: 1000,
+						opacity: 0.1,
+					}}
+					onPress={() => {
+						console.log("Pressed!");
+					}}
+				>
+					<Text
+						style={{
+							color: '#FFFFFF'
+						}}
+					>{"Pressable"}</Text>
+				</Pressable>
 				<View
 					style={{
 						flex: 1,
 						width: '100%',
 						height: '100%',
+						borderWidth: 1,
 						display: 'flex',
-						flexDirection: 'row',
+						flexDirection: 'column',
 						alignItems: 'center',
 						justifyContent: 'space-evenly',
 					}}
 				>
-					<MemorizedHeavyImage
-						size={400}
+					<TextInput
+						value={email}
+						placeholder="Emailr"
+						style={{
+							width: '100%',
+							height: 50,
+							borderWidth: 2,
+							borderColor: '#0F0F0F',
+							borderRadius: 1000,
+							paddingLeft: 16,
+						}}
+						onChangeText={(value) => {
+							setEmail(value);
+						}}
 					/>
-					<HeavyImage
-						size={400}
-					/>
+					<Text
+						style={{
+							color: '#0F0F0F',
+							fontSize: 16,
+						}}
+					>{"Verification: "} {(verifyEmail(email,true) === true) ? "true" : "false"}</Text>
+					<Text
+						style={{
+							color: '#0F0F0F',
+							fontSize: 16,
+						}}
+					>{"Validation: "} {(validateEmail === true) ? "true" : "false"}</Text>
 				</View>
 			</View>
 		</View>

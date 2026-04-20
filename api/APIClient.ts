@@ -5,7 +5,7 @@ const APIClient = axios.create({
     baseURL: BaseURL,
     timeout: 5000,
     headers: {
-        "Content-Type": "applicaiton/json",
+        "Content-Type": "application/json",
     },
 });
 

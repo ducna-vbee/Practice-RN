@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const ListView = () => {
+    const dataSampleURL = "https://jsonplaceholder.typicode.com/posts";
     const screenDimensionContext = React.useContext(ScreenDimensionContext);
     const [data,setData] = React.useState<SampleJSONData[]>([]);
     const [fetchState,setFetchState] = React.useState(false);
@@ -49,8 +50,8 @@ const ListView = () => {
     }
 
     React.useEffect(() => {
-        //fetchData(dataSampleURL);
-        fetchDataWithServices();
+        fetchData(dataSampleURL);
+        //fetchDataWithServices();
     },[]);
 
     const DataList = () => {
@@ -199,8 +200,8 @@ const ListView = () => {
                         borderColor: '#0F0F0F',
                     }}
                     onPress={() => {
-                        //fetchData(dataSampleURL);
-                        fetchDataWithServices();
+                        fetchData(dataSampleURL);
+                        //fetchDataWithServices();
                     }}
                 >
                     <Text

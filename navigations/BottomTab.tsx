@@ -1,6 +1,7 @@
 import AuthContext from "@/contexts/AuthContext";
 import ThemeContext from "@/contexts/ThemeContext";
 import Counter from "@/screens/Counter";
+import ImageView from "@/screens/ImageView";
 import ListView from "@/screens/ListView";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from "react";
@@ -25,6 +26,15 @@ const ApplicationBottomNavigationTab = () => {
                 component={Counter}
                 options={{
                     //tabBarIcon: require("../assets/images/icon.png"),
+                    headerShown: false,
+                    tabBarBadge: 1,
+                }}
+            />
+            <ApplicationBottomTabNavigator.Screen
+                name="ImageView"
+                component={ImageView}
+                options={{
+                    //tabBarIcon: require("../assets/images/splash-icon.png"),
                     headerShown: false,
                     tabBarBadge: 1,
                 }}

@@ -13,6 +13,13 @@ export const SampleJSONDataServices = {
     fetch: async(): Promise<SampleJSONData[]> => {
         const response: AxiosResponse<SampleJSONData[],any,object> = await APIClient.get<SampleJSONData[]>("/posts");
 
-        return response.data;
+        if (response != null && response.data != null)
+        {
+            return response.data;
+        }
+        else
+        {
+            throw Error("Response is nulled!");
+        }
     },
 };
