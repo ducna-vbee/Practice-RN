@@ -42,7 +42,7 @@ const Counter = () => {
 	const verifyEmail = React.useCallback((value: string,verbose: boolean) => {
 		if (verbose === true)
 		{
-			console.log("`email` is verified: " + email);
+			//console.log("`email` is verified: " + email);
 		}
 
 		const emailRegularExpression: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -55,7 +55,7 @@ const Counter = () => {
 
 		if (validity === true)
 		{
-			console.log("`email` is valid: " + email);
+			//console.log("`email` is valid: " + email);
 		}
 		
 		return validity;
