@@ -1,5 +1,5 @@
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
-import { SampleJSONData,SampleJSONDataServices } from "@/services/SampleJSONDataServices";
+import { SampleJSONData,SampleJSONDataServices } from "@/services/sampleJSONDataService";
 import React from 'react';
 import { ActivityIndicator,FlatList,ScrollView,SectionList,Text,TouchableOpacity,View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

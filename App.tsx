@@ -39,11 +39,11 @@ const linking = {
 const App = () => {
 	const [screenWidth,setScreenWidth] = React.useState(0);
 	const [screenHeight,setScreenHeight] = React.useState(0);
-	const [email,setEmail] = React.useState("");
-	const [password,setPassword] = React.useState("");
+	const [email,setEmail] = React.useState("eve.holt@reqres.in");
+	const [password,setPassword] = React.useState("cityslicka");
 	const [backgroundColor,setBackgroundColor] = React.useState('#FFFFFF');
 	const [textColor,setTextColor] = React.useState('#0F0F0F');
-	const [userToken,setUserToken] = React.useState<string | null>("");
+	const [userToken,setUserToken] = React.useState<string | null>(null);
 	const [tabBarHiddenState,setTabBarHiddenState] = React.useState(false);
 	const screenDimensions = useWindowDimensions();
 	const currentOS = Platform.OS;

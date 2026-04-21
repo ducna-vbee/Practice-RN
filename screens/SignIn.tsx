@@ -150,18 +150,19 @@ const SignIn = () => {
                             paddingRight: 16,
                             paddingTop: 8,
                             paddingBottom: 8,
-                        }}
+                        }}  
                         onPress={async () => {
                             try
                             {
                                 const responseData = await authenticationService.login(email,password);
-                                const userToken = responseData['user_token'];
+                                const userToken: string = responseData['token'];
                                 await SecureStore.setItemAsync('user_token', userToken);
-                                setUserToken(userToken);
                                 setSignInMessage("Signed in successfully!");
+                                setUserToken(userToken);
                             }
-                            catch
+                            catch (error)
                             {
+                                console.log(error);
                                 setSignInMessage("Invalid credential(s)!");
                             }
                         }}
