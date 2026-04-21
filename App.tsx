@@ -43,10 +43,11 @@ const App = () => {
 	const [password,setPassword] = React.useState("");
 	const [backgroundColor,setBackgroundColor] = React.useState('#FFFFFF');
 	const [textColor,setTextColor] = React.useState('#0F0F0F');
-	const [userToken,setUserToken] = React.useState<string | null>(null);
+	const [userToken,setUserToken] = React.useState<string | null>("");
 	const [tabBarHiddenState,setTabBarHiddenState] = React.useState(false);
 	const screenDimensions = useWindowDimensions();
 	const currentOS = Platform.OS;
+	const statusBarHeight: number = StatusBar.currentHeight as number;
 	const [darkModeUsage,setDarkModeUsage] = React.useState(false);
 
 	const userCredentialAuthenticationContext = React.useMemo(() => ({
@@ -106,22 +107,22 @@ const App = () => {
 						<AuthContext.Provider
 							value={userCredentialAuthenticationContext}
 						>
-								<StatusBar
-									animated={true}
-									//hidden={true}
-									translucent={true}
-									backgroundColor={'transparent'} // Use transparent so the content shows through
-									barStyle={'dark-content'}
-								/>
-								<View
-									style={{
-										position: 'absolute',
-										top: 0,
-										left: 0,
-										right: 0,
-										bottom: 0,
-									}}
-								>
+							<StatusBar
+								animated={true}
+								//hidden={true}
+								translucent={true}
+								backgroundColor={'transparent'} // Use transparent so the content shows through
+								barStyle={'dark-content'}
+							/>
+							<View
+								style={{
+									position: 'absolute',
+									top: -1.0 * statusBarHeight,
+									left: 0,
+									right: 0,
+									bottom: 0,
+								}}
+							>
 								<NavigationContainer
 									linking={linking}
 								>
