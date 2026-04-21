@@ -4,7 +4,7 @@ import { authenticationService } from "@/services/authenticationService";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from 'expo-secure-store';
 import React from 'react';
-import { Alert,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
+import { ActivityIndicator,Alert,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -22,6 +22,7 @@ const SignIn = () => {
         setUserToken,
     } = React.useContext(AuthContext);
     const [signInMessage,setSignInMessage] = React.useState("");
+    const [pendingProgress,setPendingProgress] = React.useState(false);
     const referenceToInputBox1 = React.useRef<TextInput|null>(null);
     const referenceToInputBox2 = React.useRef<TextInput|null>(null);
 
@@ -154,11 +155,13 @@ const SignIn = () => {
                         onPress={async () => {
                             try
                             {
+                                setPendingProgress(true);
                                 const responseData = await authenticationService.login(email,password);
                                 const userToken: string = responseData['token'];
                                 await SecureStore.setItemAsync('user_token', userToken);
                                 setSignInMessage("Signed in successfully!");
                                 setUserToken(userToken);
+                                setPendingProgress(false);
                             }
                             catch (error)
                             {
@@ -167,6 +170,17 @@ const SignIn = () => {
                             }
                         }}
                     >
+                        {(pendingProgress === false) ? (
+                            <ActivityIndicator
+                                color={'#FFFFFF'}
+                                style={{
+                                    position: 'absolute',
+                                    marginLeft: 10,
+                                }}
+                            />
+                        ) : (
+                            <View></View>
+                        )}
                         <Text
                             style={{
                                 fontSize: 18,

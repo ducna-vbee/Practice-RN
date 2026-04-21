@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import AuthContext from "@/contexts/AuthContext";
 import SettingsContext from "@/contexts/SettingsContext";
-import * as SecureStore from 'expo-secure-store';
+import { authenticationService } from "@/services/authenticationService";
 import React from "react";
 import { ScrollView,StyleSheet,Switch,Text,TouchableOpacity,View } from "react-native";
 
@@ -22,12 +22,10 @@ const Settings = () => {
     {
         try 
         {
-            await SecureStore.deleteItemAsync('user_token');
+            await authenticationService.signOut();
             setUserToken(null);
             setEmail("");
             setPassword("");
-
-            console.log("User successfully signed out and persistence cleared.");
         }
         catch (error)
         {

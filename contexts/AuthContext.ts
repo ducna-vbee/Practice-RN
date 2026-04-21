@@ -2,13 +2,11 @@ import React from 'react';
 
 const AuthContext = React.createContext({
     email: "",
-    password: "",
     setEmail: (value: React.SetStateAction<string>) => {},
+    password: "",
     setPassword: (value: React.SetStateAction<string>) => {},
     userToken: null as string | null,
     setUserToken: (previouseState: string | null) => {},
-    signIn: (token: string) => {},
-    signOut: () => {},
 });
 
 export default AuthContext;
