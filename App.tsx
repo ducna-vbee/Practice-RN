@@ -47,7 +47,7 @@ const App = () => {
 	const [tabBarHiddenState,setTabBarHiddenState] = React.useState(false);
 	const screenDimensions = useWindowDimensions();
 	const currentOS = Platform.OS;
-	const statusBarHeight: number = StatusBar.currentHeight as number;
+	const statusBarHeight: number = ((StatusBar.currentHeight != null) && (StatusBar.currentHeight !== undefined)) ? StatusBar.currentHeight : 0;
 	const [darkModeUsage,setDarkModeUsage] = React.useState(false);
 
 	const userCredentialAuthenticationContext = React.useMemo(() => ({
