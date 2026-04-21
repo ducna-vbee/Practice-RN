@@ -3,8 +3,9 @@ import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
 import { useNavigation } from "@react-navigation/native";
 import React from 'react';
-import { Alert,KeyboardAvoidingView,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
+import { Alert,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 const SignIn = () => {
     const navigator = useNavigation();
@@ -59,7 +60,7 @@ const SignIn = () => {
             }}
         >
             <KeyboardAvoidingView
-                behavior='padding'
+                behavior={(Platform.OS === 'ios') ? 'padding' : undefined}
                 enabled={true}
                 style={{
                     flex: 1,

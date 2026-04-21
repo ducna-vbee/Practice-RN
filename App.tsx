@@ -43,7 +43,7 @@ const App = () => {
 	const [password,setPassword] = React.useState("");
 	const [backgroundColor,setBackgroundColor] = React.useState('#FFFFFF');
 	const [textColor,setTextColor] = React.useState('#0F0F0F');
-	const [userToken,setUserToken] = React.useState<string | null>("");
+	const [userToken,setUserToken] = React.useState<string | null>(null);
 	const [tabBarHiddenState,setTabBarHiddenState] = React.useState(false);
 	const screenDimensions = useWindowDimensions();
 	const currentOS = Platform.OS;
