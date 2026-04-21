@@ -1,2 +1,1 @@
-export const ApplicationToken: string = "abcdefgh";
-export const BaseURL = "https://jsonplaceholder.typicode.com/";
+export const BaseURL = "https://reqres.in/api";

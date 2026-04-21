@@ -1,4 +1,4 @@
-import APIClient from "@/api/APIClient";
+import APIClient from "@/api/client";
 import { AxiosResponse } from "axios";
 
 export interface SampleJSONData

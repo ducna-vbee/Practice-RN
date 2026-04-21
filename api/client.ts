@@ -1,5 +1,6 @@
-import { ApplicationToken,BaseURL } from '@/env';
+import { BaseURL } from '@/env';
 import axios from 'axios';
+import * as ExpoSecureStore from 'expo-secure-store';
 
 const APIClient = axios.create({
     baseURL: BaseURL,
@@ -11,7 +12,7 @@ const APIClient = axios.create({
 
 APIClient.interceptors.request.use(
     async (config) => {
-        const token = ApplicationToken;
+        const token = await ExpoSecureStore.getItemAsync('user_token');
 
         if (token != null)
         {

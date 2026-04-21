@@ -5,7 +5,8 @@ const AuthContext = React.createContext({
     password: "",
     setEmail: (value: React.SetStateAction<string>) => {},
     setPassword: (value: React.SetStateAction<string>) => {},
-    userToken: null as string | null, 
+    userToken: null as string | null,
+    setUserToken: (previouseState: string | null) => {},
     signIn: (token: string) => {},
     signOut: () => {},
 });

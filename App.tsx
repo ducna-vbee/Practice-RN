@@ -55,7 +55,8 @@ const App = () => {
 		password: password,
 		setEmail: setEmail,
 		setPassword: setPassword,
-		userToken,
+		userToken: userToken,
+		setUserToken: setUserToken,
 		signIn: (token: string) => setUserToken(token),
 		signOut: () => setUserToken(null),
 	}),[email,password,userToken]);

@@ -1,7 +1,8 @@
-import SampleData from "@/assets/sample_data";
 import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
+import { authenticationService } from "@/services/authenticationService";
 import { useNavigation } from "@react-navigation/native";
+import * as SecureStore from 'expo-secure-store';
 import React from 'react';
 import { Alert,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,33 +19,32 @@ const SignIn = () => {
         password,
         setEmail,
         setPassword,
-        signIn,
+        setUserToken,
     } = React.useContext(AuthContext);
     const [signInMessage,setSignInMessage] = React.useState("");
     const referenceToInputBox1 = React.useRef<TextInput|null>(null);
     const referenceToInputBox2 = React.useRef<TextInput|null>(null);
 
-    function validateCredentials(email: string,password: string): boolean
-    {
-        return ((email === SampleData.email) && (password === SampleData.password))
-    }
+    React.useEffect(() => {
+        const unsubscribe = navigator.addListener('beforeRemove', (event) => {
+            event.preventDefault();
 
-    navigator.addListener('beforeRemove',(event) => {
-        event.preventDefault();
+            Alert.alert(
+                'Discard changes?',
+                'You have unsaved changes. Are you sure you want to leave?',
+                [
+                    { text: "Don't leave",style: 'cancel',onPress: () => { } },
+                    {
+                        text: 'Discard',
+                        style: 'destructive',
+                        onPress: () => navigator.dispatch(event.data.action),
+                    },
+                ]
+            );
+        });
 
-        Alert.alert(
-            'Discard changes?',
-            'You have unsaved changes. Are you sure you want to leave?',
-            [
-                { text: "Don't leave",style: 'cancel',onPress: () => { } },
-                {
-                    text: 'Discard',
-                    style: 'destructive',
-                    onPress: () => navigator.dispatch(event.data.action),
-                },
-            ]
-        );
-    });
+        return unsubscribe;
+    }, [navigator]);
 
     return (
         <SafeAreaView
@@ -151,15 +151,16 @@ const SignIn = () => {
                             paddingTop: 8,
                             paddingBottom: 8,
                         }}
-                        onPress={() => {
-                            if (validateCredentials(email,password) === true)
+                        onPress={async () => {
+                            try
                             {
+                                const responseData = await authenticationService.login(email,password);
+                                const userToken = responseData['user_token'];
+                                await SecureStore.setItemAsync('user_token', userToken);
+                                setUserToken(userToken);
                                 setSignInMessage("Signed in successfully!");
-                                setEmail(email);
-                                setPassword(password);
-                                signIn("abcd");
                             }
-                            else
+                            catch
                             {
                                 setSignInMessage("Invalid credential(s)!");
                             }
