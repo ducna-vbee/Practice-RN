@@ -76,6 +76,18 @@ const CounterModal = ({visibility,setVisibility}: {visibility: boolean,setVisibi
 	)
 };
 
+const ExpensiveBanner = ({ title }: { title: any }) => {
+    console.log("Banner rendered: " + title + " at " + Date.now());
+
+    return (
+        <View style={{ padding: 20, backgroundColor: '#eee' }}>
+            <Text>{JSON.stringify(title)}</Text>
+        </View>
+    );
+};
+
+const MemorizedExpensiveBanner = React.memo(ExpensiveBanner);
+
 const Counter = () => {
 	const [counter,setCounter] = React.useState(0);
 	const [email,setEmail] = React.useState("");
@@ -170,12 +182,12 @@ const Counter = () => {
 	const userSettings = { currentEmail: email };
 
 	const shallowCompare = React.useMemo(() => {
-		console.log("Shallowly compared!");
+		//console.log("Shallowly compared!");
 		return userSettings.currentEmail.includes('@');
 	}, [userSettings]);
 
 	const deepCompare = React.useMemo(() => {
-		console.log("Deeply compared!");
+		//console.log("Deeply compared!");
 		return userSettings.currentEmail.includes('@');
 	}, [userSettings.currentEmail]);
 
@@ -306,6 +318,9 @@ const Counter = () => {
 			<CounterModal
 				visibility={modalVisibility}
 				setVisibility={setModalVisibility}
+			/>
+			<MemorizedExpensiveBanner
+				title={email}
 			/>
 		</View>
 	);

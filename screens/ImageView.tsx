@@ -99,6 +99,27 @@ const ImageView = () => {
 					}}
 				>{"Image View"}</Text>
 			</TouchableOpacity>
+			<TouchableOpacity
+				style={{
+					paddingLeft: 16,
+					paddingRight: 16,
+					paddingTop: 4,
+					paddingBottom: 4,
+					borderRadius: 1000,
+					borderWidth: 2,
+					borderColor: '#0F0F0F',
+				}}
+				onPress={() => {
+					navigator.goBack();
+				}}
+			>
+				<Text
+					style={{
+						fontWeight: 700,
+						fontSize: 16,
+					}}
+				>{"Go Back"}</Text>
+			</TouchableOpacity>
             <MemorizedHeavyImage
                 size={100}
             />
