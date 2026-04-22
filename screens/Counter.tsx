@@ -106,6 +106,7 @@ const Counter = () => {
 			useNativeDriver: true,
 		}).start();
 	};
+	
 	const fadeOut = () => {
 		Animated.timing(opacityAnimation, {
 			toValue: 1,
@@ -132,7 +133,7 @@ const Counter = () => {
 	const verifyEmail = React.useCallback((value: string,verbose: boolean) => {
 		if (verbose === true)
 		{
-			//console.log("`email` is verified: " + email);
+			//console.log("`email` is verified: " + email + " with tick " + Date.now().toString());
 		}
 
 		const emailRegularExpression: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -140,16 +141,48 @@ const Counter = () => {
 		return emailRegularExpression.test(value);
 	},[email]);
 
+	// const verifyEmail = (value: string,verbose: boolean) => {
+	// 	if (verbose === true)
+	// 	{
+	// 		//console.log("`email` is verified: " + email + " with tick " + Date.now().toString());
+	// 	}
+
+	// 	const emailRegularExpression: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+	// 	return emailRegularExpression.test(value);
+	// };
+
 	const validateEmail: boolean = React.useMemo(() => {
 		const validity = verifyEmail(email,false);
 
 		if (validity === true)
 		{
-			//console.log("`email` is valid: " + email);
+			//console.log("`email` is valid: " + email + " with tick " + Date.now().toString());
+		}
+		else
+		{
+			//console.log("`email` is invalid: " + email + " with tick " + Date.now().toString());
 		}
 		
 		return validity;
 	},[verifyEmail, email]);
+
+	const userSettings = { currentEmail: email };
+
+	const shallowCompare = React.useMemo(() => {
+		console.log("Shallowly compared!");
+		return userSettings.currentEmail.includes('@');
+	}, [userSettings]);
+
+	const deepCompare = React.useMemo(() => {
+		console.log("Deeply compared!");
+		return userSettings.currentEmail.includes('@');
+	}, [userSettings.currentEmail]);
+
+	React.useEffect(() => {
+		shallowCompare;
+		deepCompare;
+	},[deepCompare, shallowCompare]);
 
 	return (
 		<View
