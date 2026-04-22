@@ -1,13 +1,14 @@
 import ImageView from "@/screens/ImageView";
 import ListView from "@/screens/ListView";
 import NumberView from "@/screens/NumberView";
+import RootStackParamList from "@/screens/RootStackParamList";
 import Settings from "@/screens/Settings";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { Text,TouchableOpacity } from "react-native";
 
-const ScreenStackNavigator = createNativeStackNavigator();
+const ScreenStackNavigator = createNativeStackNavigator<RootStackParamList>();
 
 const ViewStack = () => {
     const navigator = useNavigation();
@@ -40,7 +41,6 @@ const ViewStack = () => {
             <ScreenStackNavigator.Screen
                 name="NumberView"
                 component={NumberView}
-
                 options={{
                     headerLeft: () => (
                         <TouchableOpacity onPress={() => {

@@ -1,8 +1,9 @@
 type RootStackParamList = {
-    SignIn: undefined;
-    Counter: { initialCount: number; user: string };
     ListView: { category?: string };
-    ApplicationBottomNavigationTab: undefined;
+    ImageView: undefined;
+    SectionView: undefined;
+    Settings: undefined;
+    NumberView: {value: number};
 };
 
 export default RootStackParamList;
