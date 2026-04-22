@@ -1,6 +1,7 @@
 import { BaseURL } from '@/env';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
 
 const APIClient = axios.create({
     baseURL: BaseURL,
@@ -56,7 +57,7 @@ APIClient.interceptors.response.use(
         }
         else if (status === 400)
         {
-            console.log("Bad request!");
+            Alert.alert("Input Error", response.data.message || "Please check your data.");
         }
         else if (status === 401)
         {
@@ -105,11 +106,15 @@ APIClient.interceptors.response.use(
         }
         else if (status === 403)
         {
-            console.log("Resource is not accessible!");
+            Alert.alert("Access Denied", "You do not have permission to view this.");
         }
         else if (status === 404)
         {
-            console.log("Resource not found.");
+            Alert.alert("Server Error", "Encountered an internal server error!");
+        }
+        else if (status === 500)
+        {
+            Alert.alert("Network Error", "Please check your internet connection.");
         }
 
         return Promise.reject(error);

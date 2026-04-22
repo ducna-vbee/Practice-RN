@@ -5,12 +5,13 @@
  * @format
  */
 
+import NetInfo from "@react-native-community/netinfo";
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Linking from 'expo-linking';
 import React from 'react';
-import { Platform,StatusBar,useWindowDimensions,View } from 'react-native';
+import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colors } from './constants/theme';
 import AuthContext from './contexts/AuthContext';
@@ -38,6 +39,7 @@ const linking = {
 const App = () => {
 	const [screenWidth,setScreenWidth] = React.useState(0);
 	const [screenHeight,setScreenHeight] = React.useState(0);
+	const [offlineState, setOfflineState] = React.useState(false);
 	const [email,setEmail] = React.useState("eve.holt@reqres.in");
 	const [password,setPassword] = React.useState("cityslicka");
 	const [backgroundColor,setBackgroundColor] = React.useState('#FFFFFF');
@@ -80,90 +82,122 @@ const App = () => {
 		}
 	},[darkModeUsage]);
 
+	React.useEffect(() => {
+        // Subscribe to network state changes
+        const unsubscribe = NetInfo.addEventListener(state => {
+            setOfflineState(!state.isConnected);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
 	return (
 		<SafeAreaProvider>
-			<SettingsContext.Provider
-				value={{
-					darkModeUsage: darkModeUsage,
-					setDarkModeUsage: setDarkModeUsage,
-				}}
-			>
-				<ScreenDimensionContext.Provider
+			{(offlineState === false) ? (
+				<SettingsContext.Provider
 					value={{
-						screenWidth: screenWidth,
-						screenHeight: screenHeight,
+						darkModeUsage: darkModeUsage,
+						setDarkModeUsage: setDarkModeUsage,
 					}}
 				>
-					<ThemeContext.Provider
+					<ScreenDimensionContext.Provider
 						value={{
-							backgroundColor: backgroundColor,
-							setBackgroundColor: setBackgroundColor,
-							textColor: textColor,
-							setTextColor: setTextColor,
-							tabBarHiddenState: tabBarHiddenState,
-							setTabBarHiddenState: setTabBarHiddenState,
+							screenWidth: screenWidth,
+							screenHeight: screenHeight,
 						}}
 					>
-						<AuthContext.Provider
-							value={userCredentialAuthenticationContext}
+						<ThemeContext.Provider
+							value={{
+								backgroundColor: backgroundColor,
+								setBackgroundColor: setBackgroundColor,
+								textColor: textColor,
+								setTextColor: setTextColor,
+								tabBarHiddenState: tabBarHiddenState,
+								setTabBarHiddenState: setTabBarHiddenState,
+							}}
 						>
-							<StatusBar
-								animated={true}
-								//hidden={true}
-								translucent={true}
-								backgroundColor={'transparent'} // Use transparent so the content shows through
-								barStyle={'dark-content'}
-							/>
-							<View
-								style={{
-									position: 'absolute',
-									top: -1.0 * statusBarHeight,
-									left: 0,
-									right: 0,
-									bottom: 0,
-								}}
+							<AuthContext.Provider
+								value={userCredentialAuthenticationContext}
 							>
-								<NavigationContainer
-									linking={linking}
+								<StatusBar
+									animated={true}
+									//hidden={true}
+									translucent={true}
+									backgroundColor={'transparent'} // Use transparent so the content shows through
+									barStyle={'dark-content'}
+								/>
+								<View
+									style={{
+										position: 'absolute',
+										top: -1.0 * statusBarHeight,
+										left: 0,
+										right: 0,
+										bottom: 0,
+									}}
 								>
-									{(userToken !== null) ? (
-										<ApplicationNavigationDrawerShell.Navigator
-											initialRouteName="ApplicationBottomNavigationTab"
-										>
-											<ApplicationNavigationDrawerShell.Screen
-												name="ApplicationBottomNavigationTab"
-												component={ApplicationBottomNavigationTab}
-												options={{
-													headerShown: true,
-												}}
-											/>
-											<ApplicationNavigationDrawerShell.Screen
-												name="Settings"
-												component={Settings}
-												options={{
-													headerShown: true,
-												}}
-											/>
-										</ApplicationNavigationDrawerShell.Navigator>
-									) : (
-										<ApplicationScreenNavigationStack.Navigator
-											initialRouteName="SignIn"
-										>
-											<ApplicationScreenNavigationStack.Screen
-												name="SignIn"
-												component={SignIn}
-												options={{
-													headerShown: false,
-												}}
-											/>
-										</ApplicationScreenNavigationStack.Navigator>
-									)}
-								</NavigationContainer>
-							</View>
-						</AuthContext.Provider>
-					</ThemeContext.Provider>
-				</ScreenDimensionContext.Provider>
-			</SettingsContext.Provider>
+									<NavigationContainer
+										linking={linking}
+									>
+										{(userToken !== null) ? (
+											<ApplicationNavigationDrawerShell.Navigator
+												initialRouteName="ApplicationBottomNavigationTab"
+											>
+												<ApplicationNavigationDrawerShell.Screen
+													name="ApplicationBottomNavigationTab"
+													component={ApplicationBottomNavigationTab}
+													options={{
+														headerShown: true,
+													}}
+												/>
+												<ApplicationNavigationDrawerShell.Screen
+													name="Settings"
+													component={Settings}
+													options={{
+														headerShown: true,
+													}}
+												/>
+											</ApplicationNavigationDrawerShell.Navigator>
+										) : (
+											<ApplicationScreenNavigationStack.Navigator
+												initialRouteName="SignIn"
+											>
+												<ApplicationScreenNavigationStack.Screen
+													name="SignIn"
+													component={SignIn}
+													options={{
+														headerShown: false,
+													}}
+												/>
+											</ApplicationScreenNavigationStack.Navigator>
+										)}
+									</NavigationContainer>
+								</View>
+							</AuthContext.Provider>
+						</ThemeContext.Provider>
+					</ScreenDimensionContext.Provider>
+				</SettingsContext.Provider>
+			) : (
+				<View 
+					style={{ 
+						flex: 1,
+						width: '100%',
+						height: '100%',
+						backgroundColor: 'red',
+						padding: 10,
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}>
+                    <Text
+						style={{
+							fontSize: 20,
+							color: '#c2c2c2',
+							textAlign: 'center'
+						}}
+					>{"No Internet Connection"}</Text>
+                </View>
+			)}
 		</SafeAreaProvider>
 	);
 };
