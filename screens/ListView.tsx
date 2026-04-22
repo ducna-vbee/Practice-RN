@@ -1,11 +1,13 @@
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
 import { SampleJSONData,SampleJSONDataServices } from "@/services/sampleJSONDataService";
+import { useNavigation } from "@react-navigation/native";
 import React from 'react';
 import { ActivityIndicator,FlatList,ScrollView,SectionList,Text,TouchableOpacity,View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const ListView = () => {
+    const navigator = useNavigation();
     const dataSampleURL = "https://jsonplaceholder.typicode.com/posts";
     const screenDimensionContext = React.useContext(ScreenDimensionContext);
     const [data,setData] = React.useState<SampleJSONData[]>([]);
@@ -410,6 +412,27 @@ const ListView = () => {
                             fontSize: 16,
                         }}
                     >{"Fetch"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                        paddingTop: 4,
+                        paddingBottom: 4,
+                        borderRadius: 1000,
+                        borderWidth: 2,
+                        borderColor: '#0F0F0F',
+                    }}
+                    onPress={() => {
+                        navigator.navigate("ImageView" as never);
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontWeight: 700,
+                            fontSize: 16,
+                        }}
+                    >{"Image View"}</Text>
                 </TouchableOpacity>
             </View>
             <View

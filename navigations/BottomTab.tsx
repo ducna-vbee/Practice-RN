@@ -3,13 +3,13 @@ import ThemeContext from "@/contexts/ThemeContext";
 import AndroidKeyboardAvoidingView from "@/screens/AndroidKeyboardAvoidingView";
 import Counter from "@/screens/Counter";
 import Flexible from "@/screens/Flexible";
-import ImageView from "@/screens/ImageView";
 import ImmutableCounterView from "@/screens/ImmutableCounterView";
 import ListView from "@/screens/ListView";
 import MutableContextView from "@/screens/MutableContext";
 import ReferenceView from "@/screens/ReferenceView";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from "react";
+import ViewStack from "./ViewStack";
 
 const ApplicationBottomTabNavigator = createBottomTabNavigator();
 
@@ -36,8 +36,8 @@ const ApplicationBottomNavigationTab = () => {
                 }}
             />
             <ApplicationBottomTabNavigator.Screen
-                name="ImageView"
-                component={ImageView}
+                name="ViewStack"
+                component={ViewStack}
                 options={{
                     //tabBarIcon: require("../assets/images/splash-icon.png"),
                     headerShown: false,
