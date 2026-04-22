@@ -55,7 +55,8 @@ const ViewStack = () => {
                         </TouchableOpacity>
                     ),
                 }}
-            />
+            >
+            </ScreenStackNavigator.Screen>
         </ScreenStackNavigator.Navigator>
     );
 };

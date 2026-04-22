@@ -3,7 +3,7 @@ type RootStackParamList = {
     ImageView: undefined;
     SectionView: undefined;
     Settings: undefined;
-    NumberView: {value: number};
+    NumberView: {content: number};
 };
 
 export default RootStackParamList;
