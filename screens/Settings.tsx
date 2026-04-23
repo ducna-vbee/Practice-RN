@@ -3,7 +3,7 @@ import AuthContext from "@/contexts/AuthContext";
 import SettingsContext from "@/contexts/SettingsContext";
 import { authenticationService } from "@/services/authenticationService";
 import { logout } from "@/slices/UserSlice";
-import { RootState } from "@/store.redux";
+import { RootState } from "@/store";
 import React from "react";
 import { ScrollView,StyleSheet,Switch,Text,TouchableOpacity,View } from "react-native";
 import { useDispatch,useSelector } from "react-redux";
@@ -124,7 +124,7 @@ const Settings = () => {
                     }}
                     onPress={() => {
                         handleSignOut();
-                        dispatcher(logout())
+                        dispatcher(logout());
                     }}
                 >
                     <Text

@@ -1,8 +1,7 @@
-import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
 import { authenticationService } from "@/services/authenticationService";
 import { login } from "@/slices/UserSlice";
-import { RootState } from "@/store.redux";
+import { RootState } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from 'expo-secure-store';
 import React from 'react';
@@ -17,13 +16,15 @@ const SignIn = () => {
         screenWidth,
         screenHeight,
     } = React.useContext(ScreenDimensionContext);
-    const {
-        email,
-        password,
-        setEmail,
-        setPassword,
-        setUserToken,
-    } = React.useContext(AuthContext);
+    // const {
+    //     email,
+    //     password,
+    //     setEmail,
+    //     setPassword,
+    //     setUserToken,
+    // } = React.useContext(AuthContext);
+    const [email,setEmail] = React.useState("eve.holt@reqres.in");
+    const [password,setPassword] = React.useState("cityslicka");
     const [signInMessage,setSignInMessage] = React.useState("");
     const [pendingProgress,setPendingProgress] = React.useState(false);
     const referenceToInputBox1 = React.useRef<TextInput|null>(null);
@@ -165,9 +166,12 @@ const SignIn = () => {
                                 const userToken: string = responseData['token'];
                                 await SecureStore.setItemAsync('user_token', userToken);
                                 setSignInMessage("Signed in successfully!");
-                                setUserToken(userToken);
                                 setPendingProgress(false);
-                                dispatcher(login());
+                                dispatcher(login({
+                                    email: email,
+                                    password: password,
+                                    token: userToken,
+                                }));
                             }
                             catch (error)
                             {

@@ -15,14 +15,13 @@ import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { Colors } from './constants/theme';
-import AuthContext from './contexts/AuthContext';
 import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
-import { store } from "./store.redux";
+import { store,useAppSelector } from "./store";
 
 
 const ApplicationScreenNavigationStack = createNativeStackNavigator();
@@ -39,31 +38,25 @@ const linking = {
 	},
 };
 
-const App = () => {
+const MainLayout = () => {
 	const [screenWidth,setScreenWidth] = React.useState(0);
 	const [screenHeight,setScreenHeight] = React.useState(0);
-	const [offlineState, setOfflineState] = React.useState(false);
-	const [email,setEmail] = React.useState("eve.holt@reqres.in");
-	const [password,setPassword] = React.useState("cityslicka");
 	const [backgroundColor,setBackgroundColor] = React.useState('#FFFFFF');
 	const [textColor,setTextColor] = React.useState('#0F0F0F');
-	const [userToken,setUserToken] = React.useState<string | null>(null);
 	const [tabBarHiddenState,setTabBarHiddenState] = React.useState(false);
 	const screenDimensions = useWindowDimensions();
 	const currentOS = Platform.OS;
 	const statusBarHeight: number = ((StatusBar.currentHeight != null) && (StatusBar.currentHeight !== undefined)) ? StatusBar.currentHeight : 0;
 	const [darkModeUsage,setDarkModeUsage] = React.useState(false);
 
-	const userCredentialAuthenticationContext = React.useMemo(() => ({
-		email: email,
-		password: password,
-		setEmail: setEmail,
-		setPassword: setPassword,
-		userToken: userToken,
-		setUserToken: setUserToken,
-		signIn: (token: string) => setUserToken(token),
-		signOut: () => setUserToken(null),
-	}),[email,password,userToken]);
+	// const userCredentialAuthenticationContext = React.useMemo(() => ({
+	// 	email: email,
+	// 	password: password,
+	// 	setEmail: setEmail,
+	// 	setPassword: setPassword,
+	// 	userToken: userToken,
+	// 	setUserToken: setUserToken,
+	// }),[email,password,userToken]);
 
 	React.useEffect(() => {
 		setScreenWidth(screenDimensions.width);
@@ -84,6 +77,92 @@ const App = () => {
 			setTextColor(Colors.light.text);
 		}
 	},[darkModeUsage]);
+	const token = useAppSelector((state) => state.user.token);
+
+	return (
+		<SettingsContext.Provider
+			value={{
+				darkModeUsage: darkModeUsage,
+				setDarkModeUsage: setDarkModeUsage,
+			}}
+		>
+			<ScreenDimensionContext.Provider
+				value={{
+					screenWidth: screenWidth,
+					screenHeight: screenHeight,
+				}}
+			>
+				<ThemeContext.Provider
+					value={{
+						backgroundColor: backgroundColor,
+						setBackgroundColor: setBackgroundColor,
+						textColor: textColor,
+						setTextColor: setTextColor,
+						tabBarHiddenState: tabBarHiddenState,
+						setTabBarHiddenState: setTabBarHiddenState,
+					}}
+				>
+					<StatusBar
+						animated={true}
+						//hidden={true}
+						translucent={true}
+						backgroundColor={'transparent'}
+						barStyle={'dark-content'}
+					/>
+					<View
+						style={{
+							position: 'absolute',
+							top: -1.0 * statusBarHeight,
+							left: 0,
+							right: 0,
+							bottom: 0,
+						}}
+					>
+						<NavigationContainer
+							linking={linking}
+						>
+							{(token !== null) ? (
+								<ApplicationNavigationDrawerShell.Navigator
+									initialRouteName="ApplicationBottomNavigationTab"
+								>
+									<ApplicationNavigationDrawerShell.Screen
+										name="ApplicationBottomNavigationTab"
+										component={ApplicationBottomNavigationTab}
+										options={{
+											headerShown: true,
+										}}
+									/>
+									<ApplicationNavigationDrawerShell.Screen
+										name="Settings"
+										component={Settings}
+										options={{
+											headerShown: true,
+										}}
+									/>
+								</ApplicationNavigationDrawerShell.Navigator>
+							) : (
+								<ApplicationScreenNavigationStack.Navigator
+									initialRouteName="SignIn"
+								>
+									<ApplicationScreenNavigationStack.Screen
+										name="SignIn"
+										component={SignIn}
+										options={{
+											headerShown: false,
+										}}
+									/>
+								</ApplicationScreenNavigationStack.Navigator>
+							)}
+						</NavigationContainer>
+					</View>
+				</ThemeContext.Provider>
+			</ScreenDimensionContext.Provider>
+		</SettingsContext.Provider>
+	);
+};
+
+const App = () => {
+	const [offlineState, setOfflineState] = React.useState(false);
 
 	React.useEffect(() => {
         // Subscribe to network state changes
@@ -98,88 +177,7 @@ const App = () => {
 		<SafeAreaProvider>
 			{(offlineState === false) ? (
 				<Provider store={store}>
-					<SettingsContext.Provider
-						value={{
-							darkModeUsage: darkModeUsage,
-							setDarkModeUsage: setDarkModeUsage,
-						}}
-					>
-						<ScreenDimensionContext.Provider
-							value={{
-								screenWidth: screenWidth,
-								screenHeight: screenHeight,
-							}}
-						>
-							<ThemeContext.Provider
-								value={{
-									backgroundColor: backgroundColor,
-									setBackgroundColor: setBackgroundColor,
-									textColor: textColor,
-									setTextColor: setTextColor,
-									tabBarHiddenState: tabBarHiddenState,
-									setTabBarHiddenState: setTabBarHiddenState,
-								}}
-							>
-								<AuthContext.Provider
-									value={userCredentialAuthenticationContext}
-								>
-									<StatusBar
-										animated={true}
-										//hidden={true}
-										translucent={true}
-										backgroundColor={'transparent'} // Use transparent so the content shows through
-										barStyle={'dark-content'}
-									/>
-									<View
-										style={{
-											position: 'absolute',
-											top: -1.0 * statusBarHeight,
-											left: 0,
-											right: 0,
-											bottom: 0,
-										}}
-									>
-										<NavigationContainer
-											linking={linking}
-										>
-											{(userToken !== null) ? (
-												<ApplicationNavigationDrawerShell.Navigator
-													initialRouteName="ApplicationBottomNavigationTab"
-												>
-													<ApplicationNavigationDrawerShell.Screen
-														name="ApplicationBottomNavigationTab"
-														component={ApplicationBottomNavigationTab}
-														options={{
-															headerShown: true,
-														}}
-													/>
-													<ApplicationNavigationDrawerShell.Screen
-														name="Settings"
-														component={Settings}
-														options={{
-															headerShown: true,
-														}}
-													/>
-												</ApplicationNavigationDrawerShell.Navigator>
-											) : (
-												<ApplicationScreenNavigationStack.Navigator
-													initialRouteName="SignIn"
-												>
-													<ApplicationScreenNavigationStack.Screen
-														name="SignIn"
-														component={SignIn}
-														options={{
-															headerShown: false,
-														}}
-													/>
-												</ApplicationScreenNavigationStack.Navigator>
-											)}
-										</NavigationContainer>
-									</View>
-								</AuthContext.Provider>
-							</ThemeContext.Provider>
-						</ScreenDimensionContext.Provider>
-					</SettingsContext.Provider>
+					<MainLayout/>
 				</Provider>
 			) : (
 				<View 
