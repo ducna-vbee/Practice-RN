@@ -1,11 +1,14 @@
 import AuthContext from "@/contexts/AuthContext";
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
 import { authenticationService } from "@/services/authenticationService";
+import { login } from "@/slices/UserSlice";
+import { RootState } from "@/store.redux";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from 'expo-secure-store';
 import React from 'react';
 import { ActivityIndicator,Alert,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch,useSelector } from "react-redux";
 
 
 const SignIn = () => {
@@ -25,6 +28,8 @@ const SignIn = () => {
     const [pendingProgress,setPendingProgress] = React.useState(false);
     const referenceToInputBox1 = React.useRef<TextInput|null>(null);
     const referenceToInputBox2 = React.useRef<TextInput|null>(null);
+    const lastSignInTime = useSelector((state: RootState) => state.user.lastLoginTime);
+    const dispatcher = useDispatch();
 
     React.useEffect(() => {
         const unsubscribe = navigator.addListener('beforeRemove', (event) => {
@@ -162,6 +167,7 @@ const SignIn = () => {
                                 setSignInMessage("Signed in successfully!");
                                 setUserToken(userToken);
                                 setPendingProgress(false);
+                                dispatcher(login());
                             }
                             catch (error)
                             {
@@ -170,7 +176,7 @@ const SignIn = () => {
                             }
                         }}
                     >
-                        {(pendingProgress === false) ? (
+                        {(pendingProgress === true) ? (
                             <ActivityIndicator
                                 color={'#FFFFFF'}
                                 style={{
@@ -198,7 +204,11 @@ const SignIn = () => {
                         },
                     }}
                 >
-
+                    <Text
+                        style={{
+                            fontSize: 16,
+                        }}
+                    >{"Last login time: "}{lastSignInTime}</Text>
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>

@@ -13,6 +13,7 @@ import * as Linking from 'expo-linking';
 import React from 'react';
 import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
 import { Colors } from './constants/theme';
 import AuthContext from './contexts/AuthContext';
 import ScreenDimensionContext from './contexts/ScreenDimensionContext';
@@ -21,6 +22,8 @@ import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
+import { store } from "./store.redux";
+
 
 const ApplicationScreenNavigationStack = createNativeStackNavigator();
 const ApplicationNavigationDrawerShell = createDrawerNavigator();
@@ -44,7 +47,7 @@ const App = () => {
 	const [password,setPassword] = React.useState("cityslicka");
 	const [backgroundColor,setBackgroundColor] = React.useState('#FFFFFF');
 	const [textColor,setTextColor] = React.useState('#0F0F0F');
-	const [userToken,setUserToken] = React.useState<string | null>("");
+	const [userToken,setUserToken] = React.useState<string | null>(null);
 	const [tabBarHiddenState,setTabBarHiddenState] = React.useState(false);
 	const screenDimensions = useWindowDimensions();
 	const currentOS = Platform.OS;
@@ -94,88 +97,90 @@ const App = () => {
 	return (
 		<SafeAreaProvider>
 			{(offlineState === false) ? (
-				<SettingsContext.Provider
-					value={{
-						darkModeUsage: darkModeUsage,
-						setDarkModeUsage: setDarkModeUsage,
-					}}
-				>
-					<ScreenDimensionContext.Provider
+				<Provider store={store}>
+					<SettingsContext.Provider
 						value={{
-							screenWidth: screenWidth,
-							screenHeight: screenHeight,
+							darkModeUsage: darkModeUsage,
+							setDarkModeUsage: setDarkModeUsage,
 						}}
 					>
-						<ThemeContext.Provider
+						<ScreenDimensionContext.Provider
 							value={{
-								backgroundColor: backgroundColor,
-								setBackgroundColor: setBackgroundColor,
-								textColor: textColor,
-								setTextColor: setTextColor,
-								tabBarHiddenState: tabBarHiddenState,
-								setTabBarHiddenState: setTabBarHiddenState,
+								screenWidth: screenWidth,
+								screenHeight: screenHeight,
 							}}
 						>
-							<AuthContext.Provider
-								value={userCredentialAuthenticationContext}
+							<ThemeContext.Provider
+								value={{
+									backgroundColor: backgroundColor,
+									setBackgroundColor: setBackgroundColor,
+									textColor: textColor,
+									setTextColor: setTextColor,
+									tabBarHiddenState: tabBarHiddenState,
+									setTabBarHiddenState: setTabBarHiddenState,
+								}}
 							>
-								<StatusBar
-									animated={true}
-									//hidden={true}
-									translucent={true}
-									backgroundColor={'transparent'} // Use transparent so the content shows through
-									barStyle={'dark-content'}
-								/>
-								<View
-									style={{
-										position: 'absolute',
-										top: -1.0 * statusBarHeight,
-										left: 0,
-										right: 0,
-										bottom: 0,
-									}}
+								<AuthContext.Provider
+									value={userCredentialAuthenticationContext}
 								>
-									<NavigationContainer
-										linking={linking}
+									<StatusBar
+										animated={true}
+										//hidden={true}
+										translucent={true}
+										backgroundColor={'transparent'} // Use transparent so the content shows through
+										barStyle={'dark-content'}
+									/>
+									<View
+										style={{
+											position: 'absolute',
+											top: -1.0 * statusBarHeight,
+											left: 0,
+											right: 0,
+											bottom: 0,
+										}}
 									>
-										{(userToken !== null) ? (
-											<ApplicationNavigationDrawerShell.Navigator
-												initialRouteName="ApplicationBottomNavigationTab"
-											>
-												<ApplicationNavigationDrawerShell.Screen
-													name="ApplicationBottomNavigationTab"
-													component={ApplicationBottomNavigationTab}
-													options={{
-														headerShown: true,
-													}}
-												/>
-												<ApplicationNavigationDrawerShell.Screen
-													name="Settings"
-													component={Settings}
-													options={{
-														headerShown: true,
-													}}
-												/>
-											</ApplicationNavigationDrawerShell.Navigator>
-										) : (
-											<ApplicationScreenNavigationStack.Navigator
-												initialRouteName="SignIn"
-											>
-												<ApplicationScreenNavigationStack.Screen
-													name="SignIn"
-													component={SignIn}
-													options={{
-														headerShown: false,
-													}}
-												/>
-											</ApplicationScreenNavigationStack.Navigator>
-										)}
-									</NavigationContainer>
-								</View>
-							</AuthContext.Provider>
-						</ThemeContext.Provider>
-					</ScreenDimensionContext.Provider>
-				</SettingsContext.Provider>
+										<NavigationContainer
+											linking={linking}
+										>
+											{(userToken !== null) ? (
+												<ApplicationNavigationDrawerShell.Navigator
+													initialRouteName="ApplicationBottomNavigationTab"
+												>
+													<ApplicationNavigationDrawerShell.Screen
+														name="ApplicationBottomNavigationTab"
+														component={ApplicationBottomNavigationTab}
+														options={{
+															headerShown: true,
+														}}
+													/>
+													<ApplicationNavigationDrawerShell.Screen
+														name="Settings"
+														component={Settings}
+														options={{
+															headerShown: true,
+														}}
+													/>
+												</ApplicationNavigationDrawerShell.Navigator>
+											) : (
+												<ApplicationScreenNavigationStack.Navigator
+													initialRouteName="SignIn"
+												>
+													<ApplicationScreenNavigationStack.Screen
+														name="SignIn"
+														component={SignIn}
+														options={{
+															headerShown: false,
+														}}
+													/>
+												</ApplicationScreenNavigationStack.Navigator>
+											)}
+										</NavigationContainer>
+									</View>
+								</AuthContext.Provider>
+							</ThemeContext.Provider>
+						</ScreenDimensionContext.Provider>
+					</SettingsContext.Provider>
+				</Provider>
 			) : (
 				<View 
 					style={{ 

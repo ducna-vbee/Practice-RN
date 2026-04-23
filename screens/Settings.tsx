@@ -2,8 +2,11 @@ import { Colors } from "@/constants/theme";
 import AuthContext from "@/contexts/AuthContext";
 import SettingsContext from "@/contexts/SettingsContext";
 import { authenticationService } from "@/services/authenticationService";
+import { logout } from "@/slices/UserSlice";
+import { RootState } from "@/store.redux";
 import React from "react";
 import { ScrollView,StyleSheet,Switch,Text,TouchableOpacity,View } from "react-native";
+import { useDispatch,useSelector } from "react-redux";
 
 
 const Settings = () => {
@@ -18,14 +21,17 @@ const Settings = () => {
         setPassword,
     } = React.useContext(AuthContext);
 
+    const lastSignOutTime = useSelector((state: RootState) => state.user.lastLogoutTime);
+    const dispatcher = useDispatch();
+
     async function handleSignOut()
     {
         try 
         {
             await authenticationService.signOut();
             setUserToken(null);
-            setEmail("");
-            setPassword("");
+            setEmail("eve.holt@reqres.in");
+            setPassword("cityslicka");
         }
         catch (error)
         {
@@ -118,6 +124,7 @@ const Settings = () => {
                     }}
                     onPress={() => {
                         handleSignOut();
+                        dispatcher(logout())
                     }}
                 >
                     <Text
@@ -127,6 +134,12 @@ const Settings = () => {
                         }}
                     >{"Sign Out"}</Text>
                 </TouchableOpacity>
+
+                 <Text
+                    style={{
+                        fontSize: 16,
+                    }}
+                >{"Last logout time: "}{lastSignOutTime}</Text>
             </View>
         </View>  
     );
