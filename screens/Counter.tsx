@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Animated,Modal,Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
 
-const CounterModal = ({visibility,setVisibility}: {visibility: boolean,setVisibility:(previouseState: boolean) => void}) => {
+const CounterModal = ({ visibility,setVisibility }: { visibility: boolean,setVisibility: (previouseState: boolean) => void }) => {
 	return (
 		<Modal
 			visible={visibility}
@@ -76,24 +76,40 @@ const CounterModal = ({visibility,setVisibility}: {visibility: boolean,setVisibi
 	)
 };
 
-const ExpensiveBanner = ({ title }: { title: any }) => {
-    console.log("Banner rendered: " + title + " at " + Date.now());
+const ExpensiveBanner = ({ title }: { title: string | { email: string } }) => {
+	console.log("Banner rendered: " + title + " at " + Date.now());
 
-    return (
-        <View style={{ padding: 20, backgroundColor: '#eee' }}>
-            <Text>{JSON.stringify(title)}</Text>
-        </View>
-    );
+	return (
+		<View style={{ padding: 20,backgroundColor: '#eee' }}>
+			<Text>{JSON.stringify(title)}</Text>
+		</View>
+	);
 };
 
-const MemorizedExpensiveBanner = React.memo(ExpensiveBanner);
+const MemorizedExpensiveBanner = React.memo(ExpensiveBanner,(first,second) => {
+	const firstTitle = first.title;
+	const secondTitle = second.title;
+
+	if ((typeof firstTitle === 'string') && (typeof secondTitle === 'string'))
+	{
+		return (firstTitle === secondTitle);
+	}
+	else if ((firstTitle != null) && (typeof firstTitle === 'object') && (secondTitle != null) && (typeof secondTitle === 'object'))
+	{
+		return ((firstTitle as unknown as { email: string }).email === (secondTitle as unknown as { email: string }).email);
+	}
+	else
+	{
+		return false;
+	}	
+});
 
 const Counter = () => {
 	const [counter,setCounter] = React.useState(0);
 	const [email,setEmail] = React.useState("");
 	const [modalVisibility,setModalVisibility] = React.useState<boolean>(false);
 	const navigator = useNavigation();
-	
+
 	const {
 		backgroundColor,
 		textColor,
@@ -106,21 +122,21 @@ const Counter = () => {
 
 		return () => {
 			clearInterval(interval);
-		}
+		};
 	},[counter]);
 
 	const opacityAnimation = React.useRef(new Animated.Value(1)).current;
- 
+
 	const fadeIn = () => {
-		Animated.timing(opacityAnimation, {
+		Animated.timing(opacityAnimation,{
 			toValue: 0.1,
 			duration: 100,
 			useNativeDriver: true,
 		}).start();
 	};
-	
+
 	const fadeOut = () => {
-		Animated.timing(opacityAnimation, {
+		Animated.timing(opacityAnimation,{
 			toValue: 1,
 			duration: 200,
 			useNativeDriver: true,
@@ -148,6 +164,8 @@ const Counter = () => {
 			//console.log("`email` is verified: " + email + " with tick " + Date.now().toString());
 		}
 
+		//console.log("`email` is verified: " + email + " with tick " + Date.now().toString());
+
 		const emailRegularExpression: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 		return emailRegularExpression.test(value);
@@ -156,8 +174,9 @@ const Counter = () => {
 	// const verifyEmail = (value: string,verbose: boolean) => {
 	// 	if (verbose === true)
 	// 	{
-	// 		//console.log("`email` is verified: " + email + " with tick " + Date.now().toString());
+	// 		//c
 	// 	}
+	// 	//console.log("`email` is verified: " + email + " with tick " + Date.now().toString());
 
 	// 	const emailRegularExpression: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -175,26 +194,26 @@ const Counter = () => {
 		{
 			//console.log("`email` is invalid: " + email + " with tick " + Date.now().toString());
 		}
-		
+
 		return validity;
-	},[verifyEmail, email]);
+	},[verifyEmail,email]);
 
 	const userSettings = { currentEmail: email };
 
 	const shallowCompare = React.useMemo(() => {
 		//console.log("Shallowly compared!");
 		return userSettings.currentEmail.includes('@');
-	}, [userSettings]);
+	},[userSettings]);
 
 	const deepCompare = React.useMemo(() => {
 		//console.log("Deeply compared!");
 		return userSettings.currentEmail.includes('@');
-	}, [userSettings.currentEmail]);
+	},[userSettings.currentEmail]);
 
 	React.useEffect(() => {
 		shallowCompare;
 		deepCompare;
-	},[deepCompare, shallowCompare]);
+	},[deepCompare,shallowCompare]);
 
 	return (
 		<View
@@ -320,7 +339,9 @@ const Counter = () => {
 				setVisibility={setModalVisibility}
 			/>
 			<MemorizedExpensiveBanner
-				title={email}
+				title={{
+					email: email,
+				}}
 			/>
 		</View>
 	);
