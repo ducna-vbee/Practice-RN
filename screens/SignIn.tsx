@@ -1,13 +1,11 @@
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
-import { authenticationService } from "@/services/authenticationService";
-import { login } from "@/slices/UserSlice";
-import { RootState } from "@/store";
+import { signUserIn } from "@/slices/UserSlice";
+import { RootState,useAppDispatch,useAppSelector } from "@/store";
 import { useNavigation } from "@react-navigation/native";
-import * as SecureStore from 'expo-secure-store';
 import React from 'react';
 import { ActivityIndicator,Alert,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,TextInputChangeEvent,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch,useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 
 const SignIn = () => {
@@ -16,24 +14,17 @@ const SignIn = () => {
         screenWidth,
         screenHeight,
     } = React.useContext(ScreenDimensionContext);
-    // const {
-    //     email,
-    //     password,
-    //     setEmail,
-    //     setPassword,
-    //     setUserToken,
-    // } = React.useContext(AuthContext);
     const [email,setEmail] = React.useState("eve.holt@reqres.in");
     const [password,setPassword] = React.useState("cityslicka");
     const [signInMessage,setSignInMessage] = React.useState("");
-    const [pendingProgress,setPendingProgress] = React.useState(false);
-    const referenceToInputBox1 = React.useRef<TextInput|null>(null);
-    const referenceToInputBox2 = React.useRef<TextInput|null>(null);
+    const referenceToInputBox1 = React.useRef<TextInput | null>(null);
+    const referenceToInputBox2 = React.useRef<TextInput | null>(null);
     const lastSignInTime = useSelector((state: RootState) => state.user.lastLoginTime);
-    const dispatcher = useDispatch();
+    const { loading } = useAppSelector((state) => state.user);
+    const dispatcher = useAppDispatch();
 
     React.useEffect(() => {
-        const unsubscribe = navigator.addListener('beforeRemove', (event) => {
+        const unsubscribe = navigator.addListener('beforeRemove',(event) => {
             event.preventDefault();
 
             Alert.alert(
@@ -51,7 +42,7 @@ const SignIn = () => {
         });
 
         return unsubscribe;
-    }, [navigator]);
+    },[navigator]);
 
     return (
         <SafeAreaView
@@ -157,30 +148,39 @@ const SignIn = () => {
                             paddingRight: 16,
                             paddingTop: 8,
                             paddingBottom: 8,
-                        }}  
+                        }}
                         onPress={async () => {
+                            // try
+                            // {
+                            //     setPendingProgress(true);
+                            //     const responseData = await authenticationService.login(email,password);
+                            //     const userToken: string = responseData['token'];
+                            //     await SecureStore.setItemAsync('user_token', userToken);
+                            //     setSignInMessage("Signed in successfully!");
+                            //     setPendingProgress(false);
+                            //     dispatcher(loginUser({
+                            //         email: email,
+                            //         password: password,
+                            //         token: userToken,
+                            //     }));
+                            // }
+                            // catch (error)
+                            // {
+                            //     console.log(error);
+                            //     setSignInMessage("Invalid credential(s)!");
+                            // }
                             try
                             {
-                                setPendingProgress(true);
-                                const responseData = await authenticationService.login(email,password);
-                                const userToken: string = responseData['token'];
-                                await SecureStore.setItemAsync('user_token', userToken);
+                                await dispatcher(signUserIn({ email,password })).unwrap();
                                 setSignInMessage("Signed in successfully!");
-                                setPendingProgress(false);
-                                dispatcher(login({
-                                    email: email,
-                                    password: password,
-                                    token: userToken,
-                                }));
                             }
-                            catch (error)
+                            catch
                             {
-                                console.log(error);
                                 setSignInMessage("Invalid credential(s)!");
                             }
                         }}
                     >
-                        {(pendingProgress === true) ? (
+                        {(loading === true) ? (
                             <ActivityIndicator
                                 color={'#FFFFFF'}
                                 style={{

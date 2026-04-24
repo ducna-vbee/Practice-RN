@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 
 
 export const authenticationService = {
-    login: async(email: string,password: string) => {
+    signIn: async(email: string,password: string) => {
         const response = await APIClient.post("/login",{
             email: email,
             password: password,
@@ -38,10 +38,12 @@ export const authenticationService = {
         try 
         {
             await SecureStore.deleteItemAsync('user_token');
+
+            return null;
         }
         catch (error)
         {
-            console.error("Error during sign out:", error);
+            return ("Error during sign out: `" + JSON.stringify(error) + "`.");
         }
     },
 };

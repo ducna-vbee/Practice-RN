@@ -7,7 +7,7 @@ interface UserState {
     password: string,
     token: string | null,
     loading: boolean,
-    error: any,
+    error: string | null,
     lastLoginTime: string,
     lastLogoutTime: string,
 }
@@ -22,16 +22,59 @@ const initialState: UserState = {
     lastLogoutTime: (new Date()).toISOString(),
 };
 
-export const loginUser = createAsyncThunk('user/login',async ({ email,password }: any,thunkAPI) => {
+function updateLoginStateAfterSigningIn(state: any, data: any): void
+{
+    state.email = data.email;
+    state.password = data.password;
+    state.token = data.token;
+    state.lastLoginTime = new Date().toISOString();
+};
+
+function updateLoginStateAfterSigningOut(state: any): void
+{
+    state.email = "";
+    state.password = "";
+    state.token = null;
+    state.lastLogoutTime = new Date().toISOString();
+};
+
+export const signUserIn = createAsyncThunk('user/login',async ({ email,password }: {email: string,password: string},thunkAPI) => {
     try
     {
-        const response = await authenticationService.login(email,password);
-        return response.token; // This becomes the 'payload' in 'fulfilled'
+        const response = await authenticationService.signIn(email,password);
+        
+        return {
+            email: email,
+            token: response['token'],
+            loading: false,
+            error: null,
+        };
     }
-    catch (error: any)
+    catch
     {
-        // This becomes the 'payload' in 'rejected'
-        return thunkAPI.rejectWithValue("Invalid Credentials");
+        return thunkAPI.rejectWithValue({
+            message: "Signed in successfully!",
+        });
+    }
+});
+
+export const signUserOut = createAsyncThunk('user/logut',async (_,thunkAPI) => {
+    try
+    {
+        const response = await authenticationService.signOut();
+        
+        return {
+            email: "",
+            token: null,
+            loading: false,
+            error: response,
+        };
+    }
+    catch (error)
+    {
+        return thunkAPI.rejectWithValue({
+            message: JSON.stringify(error),
+        });
     }
 });
 
@@ -39,35 +82,38 @@ const UserSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        login: (state,action) => {
-            state.email = action.payload.email;
-            state.password = action.payload.password;
-            state.token = action.payload.token;
-            state.lastLoginTime = (new Date()).toISOString();
-        },
-
-        logout: (state) => {
-            state.email = "";
-            state.password = "";
-            state.token = null;
-            state.lastLogoutTime = (new Date()).toISOString();
-        },
+        handleLogin: (state,action) => updateLoginStateAfterSigningIn(state,action.payload),
+        handleLogout: (state) => updateLoginStateAfterSigningOut(state),
     },
     extraReducers: (builder) => {
-        builder.addCase(loginUser.pending, (state) => {
+        builder.addCase(signUserIn.pending, (state) => {
             state.loading = true;
             state.error = null;
         })
-        .addCase(loginUser.fulfilled, (state, action) => {
+        .addCase(signUserIn.fulfilled, (state, action) => {
+            updateLoginStateAfterSigningIn(state,action.payload);
             state.loading = false;
-            state.token = action.payload;
+            state.error = null;
         })
-        .addCase(loginUser.rejected, (state, action) => {
+        .addCase(signUserIn.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload as string;
+        })
+        .addCase(signUserOut.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(signUserOut.fulfilled, (state, action) => {
+            updateLoginStateAfterSigningOut(state);
+            state.loading = false;
+            state.error = null;
+        })
+        .addCase(signUserOut.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload as string;
         });
     },
 });
 
-export const { login,logout } = UserSlice.actions;
+export const { handleLogin,handleLogout } = UserSlice.actions;
 export default UserSlice.reducer;

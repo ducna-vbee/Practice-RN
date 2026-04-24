@@ -57,7 +57,7 @@ APIClient.interceptors.response.use(
         }
         else if (status === 400)
         {
-            Alert.alert("Input Error", response.data.message || "Please check your data.");
+            Alert.alert("Input Error", JSON.stringify(error) || "Please check your data.");
         }
         else if (status === 401)
         {

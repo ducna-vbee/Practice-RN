@@ -2,11 +2,11 @@ import { Colors } from "@/constants/theme";
 import AuthContext from "@/contexts/AuthContext";
 import SettingsContext from "@/contexts/SettingsContext";
 import { authenticationService } from "@/services/authenticationService";
-import { logout } from "@/slices/UserSlice";
-import { RootState } from "@/store";
+import { signUserOut } from "@/slices/UserSlice";
+import { RootState,useAppDispatch,useAppSelector } from "@/store";
 import React from "react";
 import { ScrollView,StyleSheet,Switch,Text,TouchableOpacity,View } from "react-native";
-import { useDispatch,useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 
 const Settings = () => {
@@ -22,7 +22,8 @@ const Settings = () => {
     } = React.useContext(AuthContext);
 
     const lastSignOutTime = useSelector((state: RootState) => state.user.lastLogoutTime);
-    const dispatcher = useDispatch();
+    const email = useAppSelector((state) => state.user.email);
+    const dispatcher = useAppDispatch();
 
     async function handleSignOut()
     {
@@ -124,7 +125,7 @@ const Settings = () => {
                     }}
                     onPress={() => {
                         handleSignOut();
-                        dispatcher(logout());
+                        dispatcher(signUserOut());
                     }}
                 >
                     <Text
