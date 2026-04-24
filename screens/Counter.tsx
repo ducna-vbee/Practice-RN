@@ -1,4 +1,6 @@
 import ThemeContext from "@/contexts/ThemeContext";
+import { selectAuthenticatedStatus } from "@/slices/UserSlice";
+import { useAppSelector } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Animated,Modal,Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
@@ -215,6 +217,8 @@ const Counter = () => {
 		deepCompare;
 	},[deepCompare,shallowCompare]);
 
+	const authenticationStatus = useAppSelector(selectAuthenticatedStatus);
+
 	return (
 		<View
 			style={{
@@ -305,6 +309,12 @@ const Counter = () => {
 							fontSize: 16,
 						}}
 					>{"Validation: "} {(validateEmail === true) ? "true" : "false"}</Text>
+					<Text
+						style={{
+							color: '#0F0F0F',
+							fontSize: 16,
+						}}
+					>{"Authentication: "} {(authenticationStatus === true) ? "true" : "false"}</Text>
 					<Pressable
 						onPress={() => {
 							setModalVisibility(!modalVisibility);

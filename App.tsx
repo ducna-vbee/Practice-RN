@@ -14,6 +14,7 @@ import React from 'react';
 import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { Colors } from './constants/theme';
 import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
@@ -21,7 +22,7 @@ import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
-import { store,useAppSelector } from "./store";
+import { persistor,store,useAppSelector } from './store';
 
 
 const ApplicationScreenNavigationStack = createNativeStackNavigator();
@@ -175,32 +176,34 @@ const App = () => {
 
 	return (
 		<SafeAreaProvider>
-			{(offlineState === false) ? (
-				<Provider store={store}>
-					<MainLayout/>
-				</Provider>
-			) : (
-				<View 
-					style={{ 
-						flex: 1,
-						width: '100%',
-						height: '100%',
-						backgroundColor: 'red',
-						padding: 10,
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center',
-					}}>
-                    <Text
-						style={{
-							fontSize: 20,
-							color: '#c2c2c2',
-							textAlign: 'center'
-						}}
-					>{"No Internet Connection"}</Text>
-                </View>
-			)}
+			<PersistGate loading={null} persistor={persistor}>
+				{(offlineState === false) ? (
+					<Provider store={store}>
+						<MainLayout/>
+					</Provider>
+				) : (
+					<View 
+						style={{ 
+							flex: 1,
+							width: '100%',
+							height: '100%',
+							backgroundColor: 'red',
+							padding: 10,
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}>
+						<Text
+							style={{
+								fontSize: 20,
+								color: '#c2c2c2',
+								textAlign: 'center'
+							}}
+						>{"No Internet Connection"}</Text>
+					</View>
+				)}
+			</PersistGate>
 		</SafeAreaProvider>
 	);
 };

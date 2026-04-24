@@ -1,6 +1,7 @@
-import { createAsyncThunk,createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk,createSelector,createSlice } from '@reduxjs/toolkit';
 
 import { authenticationService } from "@/services/authenticationService";
+import { RootState } from '@/store';
 
 interface UserState {
     email: string,
@@ -37,6 +38,15 @@ function updateLoginStateAfterSigningOut(state: any): void
     state.token = null;
     state.lastLogoutTime = new Date().toISOString();
 };
+
+const selectUser = (state: RootState) => state.user;
+
+export const selectAuthenticatedStatus = createSelector([selectUser],(user) => {
+    const result: boolean = ((user.token !== null) && (user.token.length > 0));
+    console.log("Authentication: `" + result + "`.");
+
+    return result;
+});
 
 export const signUserIn = createAsyncThunk('user/login',async ({ email,password }: {email: string,password: string},thunkAPI) => {
     try

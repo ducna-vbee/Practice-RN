@@ -1,5 +1,5 @@
 import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
-import { signUserIn } from "@/slices/UserSlice";
+import { selectAuthenticatedStatus,signUserIn } from "@/slices/UserSlice";
 import { RootState,useAppDispatch,useAppSelector } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import React from 'react';
@@ -21,6 +21,7 @@ const SignIn = () => {
     const referenceToInputBox2 = React.useRef<TextInput | null>(null);
     const lastSignInTime = useSelector((state: RootState) => state.user.lastLoginTime);
     const { loading } = useAppSelector((state) => state.user);
+    useAppSelector(selectAuthenticatedStatus);
     const dispatcher = useAppDispatch();
 
     React.useEffect(() => {
@@ -173,6 +174,7 @@ const SignIn = () => {
                             {
                                 await dispatcher(signUserIn({ email,password })).unwrap();
                                 setSignInMessage("Signed in successfully!");
+                                
                             }
                             catch
                             {
