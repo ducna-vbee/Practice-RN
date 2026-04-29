@@ -182,6 +182,18 @@ const SignIn = () => {
                             }
                         }}
                     >
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigator.navigate("SignUp" as never);
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    color: '#0044ff',
+                                    fontSize: 12,
+                                }}
+                            >{"Don't have an account? Sign Up"}</Text>
+                        </TouchableOpacity>
                         {(loading === true) ? (
                             <ActivityIndicator
                                 color={'#FFFFFF'}
@@ -191,14 +203,14 @@ const SignIn = () => {
                                 }}
                             />
                         ) : (
-                            <View></View>
+                            <Text
+                                style={{
+                                    fontSize: 18,
+                                    color: '#FFFFFF',
+                                    textTransform: 'uppercase',
+                                }}
+                            >{"SIGN IN"}</Text>
                         )}
-                        <Text
-                            style={{
-                                fontSize: 18,
-                                color: '#FFFFFF',
-                            }}
-                        >{"SIGN IN"}</Text>
                     </TouchableOpacity>
                 </View>
                 <View

@@ -48,6 +48,26 @@ export const selectAuthenticatedStatus = createSelector([selectUser],(user) => {
     return result;
 });
 
+export const signUserUp = createAsyncThunk("user/register",async({email,password,age,type}: {email: string,password: string,age: number,type: string},thunkAPI) => {
+    try
+    {
+        const response = await authenticationService.signUp(email,password,age,type);
+        
+        return {
+            email: email,
+            token: response['token'],
+            loading: false,
+            error: null,
+        };
+    }
+    catch
+    {
+        return thunkAPI.rejectWithValue({
+            message: "Failed to sign up!",
+        });
+    }
+});
+
 export const signUserIn = createAsyncThunk('user/login',async ({ email,password }: {email: string,password: string},thunkAPI) => {
     try
     {
@@ -63,7 +83,7 @@ export const signUserIn = createAsyncThunk('user/login',async ({ email,password 
     catch
     {
         return thunkAPI.rejectWithValue({
-            message: "Signed in successfully!",
+            message: "Failed to sign in!",
         });
     }
 });
@@ -96,7 +116,20 @@ const UserSlice = createSlice({
         handleLogout: (state) => updateLoginStateAfterSigningOut(state),
     },
     extraReducers: (builder) => {
-        builder.addCase(signUserIn.pending, (state) => {
+        builder.addCase(signUserUp.pending,(state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(signUserUp.fulfilled,(state,action) => {
+            updateLoginStateAfterSigningIn(state,action.payload);
+            state.loading = false;
+            state.error = null;
+        })
+        .addCase(signUserUp.rejected,(state,action) => {
+            state.loading = false;
+            state.error = action.payload as string;
+        })
+        .addCase(signUserIn.pending, (state) => {
             state.loading = true;
             state.error = null;
         })

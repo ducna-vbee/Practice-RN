@@ -4,6 +4,21 @@ import * as SecureStore from 'expo-secure-store';
 
 
 export const authenticationService = {
+    signUp: async(email: string,password: string,age: number,type: string) => {
+        const response = await APIClient.post("/register",{
+            email: email,
+            password: password,
+            age: age,
+            type: type,
+        },{
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': ReqResAPIKey,
+            },
+        });
+
+        return response.data;
+    },
     signIn: async(email: string,password: string) => {
         const response = await APIClient.post("/login",{
             email: email,
@@ -16,6 +31,18 @@ export const authenticationService = {
         });
 
         return response.data;
+    },
+    signOut: async() => {
+        try 
+        {
+            await SecureStore.deleteItemAsync('user_token');
+
+            return null;
+        }
+        catch (error)
+        {
+            return ("Error during sign out: `" + JSON.stringify(error) + "`.");
+        }
     },
     getProfile: async() => {
         const response = await APIClient.get("/profile");
@@ -33,18 +60,6 @@ export const authenticationService = {
         })
 
         return response.data;
-    },
-    signOut: async() => {
-        try 
-        {
-            await SecureStore.deleteItemAsync('user_token');
-
-            return null;
-        }
-        catch (error)
-        {
-            return ("Error during sign out: `" + JSON.stringify(error) + "`.");
-        }
     },
     resetPassword: async(email: string,newPassword: string) => {
         const response = await APIClient.post("/reset-password",{

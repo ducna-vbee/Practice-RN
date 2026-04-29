@@ -23,6 +23,7 @@ import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
+import SignUp from "./screens/SignUp";
 import { persistor,store,useAppSelector } from './store';
 
 
@@ -146,6 +147,13 @@ const MainLayout = () => {
 								<ApplicationScreenNavigationStack.Navigator
 									initialRouteName="SignIn"
 								>
+									<ApplicationScreenNavigationStack.Screen
+										name="SignUp"
+										component={SignUp}
+										options={{
+											headerShown: false,
+										}}
+									/>
 									<ApplicationScreenNavigationStack.Screen
 										name="SignIn"
 										component={SignIn}
