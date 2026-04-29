@@ -26,6 +26,7 @@ const reduxPersistSecureStorage = {
 
 const persistConfig = {
     key: 'root',
+    keyPrefix: 'react_native_redux_persist_',
     storage: reduxPersistSecureStorage,
     whitelist: ['user'],
     blacklist: ['loading','error'],

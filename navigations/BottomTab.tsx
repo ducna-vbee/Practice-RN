@@ -1,5 +1,4 @@
 import AuthContext from "@/contexts/AuthContext";
-import ThemeContext from "@/contexts/ThemeContext";
 import AndroidKeyboardAvoidingView from "@/screens/AndroidKeyboardAvoidingView";
 import Counter from "@/screens/Counter";
 import Flexible from "@/screens/Flexible";
@@ -17,10 +16,6 @@ const ApplicationBottomNavigationTab = () => {
     const {
         userToken,
     } = React.useContext(AuthContext);
-
-    const {
-        tabBarHiddenState
-    } = React.useContext(ThemeContext);
 
     return (
         <ApplicationBottomTabNavigator.Navigator

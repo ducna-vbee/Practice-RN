@@ -20,6 +20,7 @@ import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
+import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
 import { persistor,store,useAppSelector } from './store';
@@ -49,6 +50,7 @@ const MainLayout = () => {
 	const currentOS = Platform.OS;
 	const statusBarHeight: number = ((StatusBar.currentHeight != null) && (StatusBar.currentHeight !== undefined)) ? StatusBar.currentHeight : 0;
 	const [darkModeUsage,setDarkModeUsage] = React.useState(false);
+	const token = useAppSelector((state) => state.user.token);
 
 	// const userCredentialAuthenticationContext = React.useMemo(() => ({
 	// 	email: email,
@@ -78,7 +80,6 @@ const MainLayout = () => {
 			setTextColor(Colors.light.text);
 		}
 	},[darkModeUsage]);
-	const token = useAppSelector((state) => state.user.token);
 
 	return (
 		<SettingsContext.Provider
@@ -148,6 +149,13 @@ const MainLayout = () => {
 									<ApplicationScreenNavigationStack.Screen
 										name="SignIn"
 										component={SignIn}
+										options={{
+											headerShown: false,
+										}}
+									/>
+									<ApplicationScreenNavigationStack.Screen
+										name="ResetPassword"
+										component={ResetPassword}
 										options={{
 											headerShown: false,
 										}}

@@ -46,4 +46,17 @@ export const authenticationService = {
             return ("Error during sign out: `" + JSON.stringify(error) + "`.");
         }
     },
+    resetPassword: async(email: string,newPassword: string) => {
+        const response = await APIClient.post("/reset-password",{
+            email: email,
+            new_password: newPassword,
+        },{
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': ReqResAPIKey,
+            },
+        });
+
+        return response.data;
+    },
 };

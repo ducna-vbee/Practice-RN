@@ -85,8 +85,9 @@ const SignIn = () => {
                             color: '#FFFFFF',
                             fontSize: 32,
                             fontWeight: 800,
+                            textTransform: 'uppercase',
                         }}
-                    >{"Sign In"}</Text>
+                    >{"SIGN IN"}</Text>
                 </View>
                 <View
                     style={{
@@ -172,9 +173,8 @@ const SignIn = () => {
                             // }
                             try
                             {
-                                await dispatcher(signUserIn({ email,password })).unwrap();
+                               await dispatcher(signUserIn({ email,password })).unwrap();
                                 setSignInMessage("Signed in successfully!");
-                                
                             }
                             catch
                             {
@@ -206,10 +206,22 @@ const SignIn = () => {
                         ...Styles.screenViewPart,
                         ...{
                             flex: 1,
-                            justifyContent: 'center',
+                            justifyContent: 'space-evenly',
                         },
                     }}
                 >
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigator.navigate("ResetPassword" as never);
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#0044ff',
+                                fontSize: 12,
+                            }}
+                        >{"Forgot password?"}</Text>
+                    </TouchableOpacity>
                     <Text
                         style={{
                             fontSize: 16,
