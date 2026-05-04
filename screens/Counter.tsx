@@ -4,6 +4,27 @@ import { useAppSelector } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Animated,Modal,Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
+import { schedulePushNotification } from "./PushNotifications";
+
+const ErrorTrigger = () => {
+	const errorTrigger: any = undefined;
+
+	return (
+		<View
+			style={{
+				flex: 1,
+				width: '100%',
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				justifyContent: 'center',
+			}}
+		>
+			<Text>{errorTrigger.crashApp()}</Text>
+		</View>
+	);
+};
 
 const CounterModal = ({ visibility,setVisibility }: { visibility: boolean,setVisibility: (previouseState: boolean) => void }) => {
 	return (
@@ -103,13 +124,14 @@ const MemorizedExpensiveBanner = React.memo(ExpensiveBanner,(first,second) => {
 	else
 	{
 		return false;
-	}	
+	}
 });
 
 const Counter = () => {
 	const [counter,setCounter] = React.useState(0);
 	const [email,setEmail] = React.useState("");
 	const [modalVisibility,setModalVisibility] = React.useState<boolean>(false);
+	const [crashingState,setCrashingState] = React.useState<boolean>(false);
 	const navigator = useNavigation();
 
 	const {
@@ -353,6 +375,51 @@ const Counter = () => {
 					email: email,
 				}}
 			/>
+			<TouchableOpacity
+				style={{
+					borderWidth: 2,
+					borderRadius: 1000,
+					paddingLeft: 16,
+					paddingRight: 16,
+					paddingTop: 8,
+					paddingBottom: 8,
+				}}
+				onPress={async() => {
+					await schedulePushNotification();
+				}}
+			>
+				<Text
+					style={{
+						fontSize: 16,
+						color: textColor,
+					}}
+				>{"Push Notifications"}</Text>
+			</TouchableOpacity>
+			<TouchableOpacity
+				style={{
+					borderWidth: 2,
+					borderRadius: 1000,
+					paddingLeft: 16,
+					paddingRight: 16,
+					paddingTop: 8,
+					paddingBottom: 8,
+				}}
+				onPress={() => {
+					setCrashingState(true);
+				}}
+			>
+				<Text
+					style={{
+						fontSize: 16,
+						color: textColor,
+					}}
+				>{"Crash"}</Text>
+			</TouchableOpacity>
+			{(crashingState === true) ? (
+				<ErrorTrigger/>
+			) : (
+				<View></View>
+			)}
 		</View>
 	);
 };

@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const Profile = () => {
-    const [imageURI,setImageURI] = useState<string>("");
+    const [imageURI,setImageURI] = useState<string|null>(null);
     const [uploading,setUploading] = useState(false);
 
     async function requestPermission(type: 'camera' | 'library')
@@ -70,6 +70,7 @@ const Profile = () => {
     async function uploadProfilePicture(uri: string)
     {
         setUploading(true);
+
         try
         {
             const formData = new FormData();
@@ -99,6 +100,15 @@ const Profile = () => {
         }
     };
 
+    function retrieveProfileImageURI() : string
+    {
+        return "";
+    };
+
+    React.useEffect(() => {
+        setImageURI(retrieveProfileImageURI());
+    },[]);
+
     return (
         <SafeAreaView 
             style={{
@@ -116,7 +126,7 @@ const Profile = () => {
                     flex: 1,
                     width: '100%',
                     height: '100%',
-                    minHeight: 200,
+                    minHeight: 100,
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-evenly',
@@ -140,23 +150,42 @@ const Profile = () => {
                             height: '100%',
                             aspectRatio: 1 / 1,
                             borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
                         }}
                         onPress={() => {
                             pickImage(false);
                         }}
                     >
-                        <Image
-                            source={{
-                                uri: imageURI,
-                            }}
-                            style={{
-                                height: '100%',
-                                aspectRatio: 1 / 1,
-                                borderRadius: 1000,
-                            }}
-                        />
+                        {(imageURI != null) ? (
+                            <Image
+                                source={{
+                                    uri: imageURI,
+                                }}
+                                style={{
+                                    height: '100%',
+                                    aspectRatio: 1 / 1,
+                                    borderRadius: 1000,
+                                }}
+                            />
+                        ) : (
+                            <View></View>
+                        )}
                     </TouchableOpacity>
                 </View>
+            </View>
+            <View
+                style={{
+                    flex: 9,
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+
             </View>
         </SafeAreaView>
     );

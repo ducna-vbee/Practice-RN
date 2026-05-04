@@ -1,6 +1,6 @@
 import { RouteProp,StackActions,useNavigation,useRoute } from "@react-navigation/native";
 import { Text,TouchableOpacity,View } from "react-native";
-import RootStackParamList from "./RootStackParamList";
+import RootStackParamList from "../navigations/RootStackParamList";
 
 const NumberView = () => {
     const navigator = useNavigation();

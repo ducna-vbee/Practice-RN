@@ -1,11 +1,6 @@
 import AuthContext from "@/contexts/AuthContext";
-import AndroidKeyboardAvoidingView from "@/screens/AndroidKeyboardAvoidingView";
 import Counter from "@/screens/Counter";
-import FlexibleView from "@/screens/FlexibleView";
-import ImmutableCounterView from "@/screens/ImmutableCounterView";
-import ListView from "@/screens/ListView";
-import MutableContextView from "@/screens/MutableContext";
-import ReferenceView from "@/screens/ReferenceView";
+import Profile from "@/screens/Profile";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from "react";
 import ViewStack from "./ViewStack";
@@ -40,6 +35,15 @@ const ApplicationBottomNavigationTab = () => {
                 }}
             />
             <ApplicationBottomTabNavigator.Screen
+                name="Profile"
+                component={Profile}
+                options={{
+                    //tabBarIcon: require("../assets/images/splash-icon.png"),
+                    headerShown: false,
+                    tabBarBadge: 1,
+                }}
+            />
+            {/* <ApplicationBottomTabNavigator.Screen
                 name="ListView"
                 component={ListView}
                 options={{
@@ -92,7 +96,7 @@ const ApplicationBottomNavigationTab = () => {
                     headerShown: false,
                     tabBarBadge: 1,
                 }}
-            />
+            /> */}
         </ApplicationBottomTabNavigator.Navigator>
     );
 };

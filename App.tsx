@@ -10,6 +10,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Linking from 'expo-linking';
+import * as Notifications from 'expo-notifications';
 import React from 'react';
 import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -21,6 +22,7 @@ import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import ErrorBoundary from "./screens/ErrorBoundary";
+import { registerForPushNotificationsAsync } from "./screens/PushNotifications";
 import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
@@ -53,6 +55,9 @@ const MainLayout = () => {
 	const statusBarHeight: number = ((StatusBar.currentHeight != null) && (StatusBar.currentHeight !== undefined)) ? StatusBar.currentHeight : 0;
 	const [darkModeUsage,setDarkModeUsage] = React.useState(false);
 	const token = useAppSelector((state) => state.user.token);
+	const [expoPushToken,setExpoPushToken] = React.useState('');
+	const [channels,setChannels] = React.useState<Notifications.NotificationChannel[]>([]);
+	const [notification,setNotification] = React.useState<Notifications.Notification | undefined>(undefined);
 
 	// const userCredentialAuthenticationContext = React.useMemo(() => ({
 	// 	email: email,
@@ -67,7 +72,7 @@ const MainLayout = () => {
 		setScreenWidth(screenDimensions.width);
 		setScreenHeight(screenDimensions.height);
 		console.log("Current OS: `" + currentOS + "`.");
-		console.log("Test this URL in Chrome:", Linking.createURL('settings'));
+		console.log("Test this URL in Chrome:",Linking.createURL('settings'));
 	},[screenDimensions.width,screenDimensions.height,currentOS]);
 
 	React.useEffect(() => {
@@ -82,6 +87,27 @@ const MainLayout = () => {
 			setTextColor(Colors.light.text);
 		}
 	},[darkModeUsage]);
+
+	React.useEffect(() => {
+		registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
+
+		if (Platform.OS === 'android')
+		{
+			Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
+		}
+		const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+			setNotification(notification);
+		});
+
+		const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+			console.log(response);
+		});
+
+		return () => {
+			notificationListener.remove();
+			responseListener.remove();
+		};
+	},[]);
 
 	return (
 		<SettingsContext.Provider
@@ -180,16 +206,16 @@ const MainLayout = () => {
 };
 
 const App = () => {
-	const [offlineState, setOfflineState] = React.useState(false);
+	const [offlineState,setOfflineState] = React.useState(false);
 
 	React.useEffect(() => {
-        // Subscribe to network state changes
-        const unsubscribe = NetInfo.addEventListener(state => {
-            setOfflineState(!state.isConnected);
-        });
+		// Subscribe to network state changes
+		const unsubscribe = NetInfo.addEventListener(state => {
+			setOfflineState(!state.isConnected);
+		});
 
-        return () => unsubscribe();
-    }, []);
+		return () => unsubscribe();
+	},[]);
 
 	return (
 		<SafeAreaProvider>
@@ -197,11 +223,11 @@ const App = () => {
 				<PersistGate loading={null} persistor={persistor}>
 					{(offlineState === false) ? (
 						<Provider store={store}>
-							<MainLayout/>
+							<MainLayout />
 						</Provider>
 					) : (
-						<View 
-							style={{ 
+						<View
+							style={{
 								flex: 1,
 								width: '100%',
 								height: '100%',

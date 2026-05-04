@@ -1,3 +1,4 @@
+import RootStackParamList from "@/navigations/RootStackParamList";
 import FlexibleView from "@/screens/FlexibleView";
 import ImageView from "@/screens/ImageView";
 import ImmutableCounterView from "@/screens/ImmutableCounterView";
@@ -5,7 +6,6 @@ import ListView from "@/screens/ListView";
 import MutableContextView from "@/screens/MutableContext";
 import NumberView from "@/screens/NumberView";
 import ReferenceView from "@/screens/ReferenceView";
-import RootStackParamList from "@/screens/RootStackParamList";
 import Settings from "@/screens/Settings";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

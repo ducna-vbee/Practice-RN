@@ -3,7 +3,8 @@ import { createAsyncThunk,createSelector,createSlice } from '@reduxjs/toolkit';
 import { authenticationService } from "@/services/authenticationService";
 import { RootState } from '@/store';
 
-interface UserState {
+interface UserState
+{
     email: string,
     password: string,
     token: string | null,
@@ -11,7 +12,7 @@ interface UserState {
     error: string | null,
     lastLoginTime: string,
     lastLogoutTime: string,
-}
+};
 
 const initialState: UserState = {
     email: "",
