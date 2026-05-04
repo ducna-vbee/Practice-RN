@@ -22,7 +22,7 @@ import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import ErrorBoundary from "./screens/ErrorBoundary";
-import { registerForPushNotificationsAsync } from "./screens/PushNotifications";
+import { registerForPushNotificationsAsync,useNotifications } from "./screens/PushNotifications";
 import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
@@ -58,7 +58,7 @@ const MainLayout = () => {
 	const [expoPushToken,setExpoPushToken] = React.useState('');
 	const [channels,setChannels] = React.useState<Notifications.NotificationChannel[]>([]);
 	const [notification,setNotification] = React.useState<Notifications.Notification | undefined>(undefined);
-
+	useNotifications();
 	// const userCredentialAuthenticationContext = React.useMemo(() => ({
 	// 	email: email,
 	// 	password: password,
@@ -90,23 +90,12 @@ const MainLayout = () => {
 
 	React.useEffect(() => {
 		registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
+		const lastResponse = Notifications.getLastNotificationResponse();
 
-		if (Platform.OS === 'android')
+		if (lastResponse != null)
 		{
-			Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
+			console.log(JSON.stringify(lastResponse));
 		}
-		const notificationListener = Notifications.addNotificationReceivedListener(notification => {
-			setNotification(notification);
-		});
-
-		const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-			console.log(response);
-		});
-
-		return () => {
-			notificationListener.remove();
-			responseListener.remove();
-		};
 	},[]);
 
 	return (
