@@ -9,8 +9,11 @@ import {
     PURGE,REGISTER,
     REHYDRATE
 } from 'redux-persist';
+import createSagaMiddleware from 'redux-saga';
+import { userSaga } from './saga/userSaga';
 import userReducer from "./slices//UserSlice";
 
+const sagaMiddleware = createSagaMiddleware();
 
 const reduxPersistSecureStorage = {
     setItem: (key: string,value: string) => {
@@ -43,12 +46,12 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
-                // Ignore Redux Persist internal actions (they use non-serializable values)
                 ignoredActions: [FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER],
             },
-        }),
+        }).concat(sagaMiddleware),
 });
 
+sagaMiddleware.run(userSaga);
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
