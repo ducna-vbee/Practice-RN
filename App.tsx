@@ -7,7 +7,7 @@
 
 import NetInfo from "@react-native-community/netinfo";
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer,useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
@@ -22,7 +22,7 @@ import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
 import ErrorBoundary from "./screens/ErrorBoundary";
-import { registerForPushNotificationsAsync,useNotifications } from "./screens/PushNotifications";
+import { registerForPushNotificationsAsync } from "./screens/PushNotifications";
 import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
@@ -58,7 +58,39 @@ const MainLayout = () => {
 	const [expoPushToken,setExpoPushToken] = React.useState('');
 	const [channels,setChannels] = React.useState<Notifications.NotificationChannel[]>([]);
 	const [notification,setNotification] = React.useState<Notifications.Notification | undefined>(undefined);
-	useNotifications();
+	
+	function useNotifications()
+	{
+		const navigation = useNavigation();
+		const notificationListener = React.useRef<any>(null);
+		const responseListener = React.useRef<any>(null);
+
+		React.useEffect(() => {
+			notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+				console.log("Notification Received in Foreground:", notification);
+			});
+
+			responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+				const { screen, params } = response.notification.request.content.data;
+				
+				console.log("User tapped notification with data:", response.notification.request.content.data);
+
+				if (screen)
+				{
+					navigation.navigate({
+						screen: screen,
+						params: params,
+					} as never);
+				}
+			});
+
+			return () => {
+				notificationListener.current.remove();
+			responseListener.current.remove();
+			};
+		}, [navigation]);
+	};
+
 	// const userCredentialAuthenticationContext = React.useMemo(() => ({
 	// 	email: email,
 	// 	password: password,
@@ -198,7 +230,6 @@ const App = () => {
 	const [offlineState,setOfflineState] = React.useState(false);
 
 	React.useEffect(() => {
-		// Subscribe to network state changes
 		const unsubscribe = NetInfo.addEventListener(state => {
 			setOfflineState(!state.isConnected);
 		});

@@ -43,12 +43,11 @@ const persistedReducer = persistReducer(persistConfig,rootReducer);
 
 export const store = configureStore({
     reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER],
-            },
-        }).concat(sagaMiddleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: {
+            ignoredActions: [FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER],
+        },
+    }).concat(sagaMiddleware),
 });
 
 sagaMiddleware.run(userSaga);
