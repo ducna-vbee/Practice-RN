@@ -1,7 +1,7 @@
 import AuthContext from "@/contexts/AuthContext";
 import AndroidKeyboardAvoidingView from "@/screens/AndroidKeyboardAvoidingView";
 import Counter from "@/screens/Counter";
-import Flexible from "@/screens/Flexible";
+import FlexibleView from "@/screens/FlexibleView";
 import ImmutableCounterView from "@/screens/ImmutableCounterView";
 import ListView from "@/screens/ListView";
 import MutableContextView from "@/screens/MutableContext";
@@ -77,7 +77,7 @@ const ApplicationBottomNavigationTab = () => {
             />
             <ApplicationBottomTabNavigator.Screen
                 name="Flexible"
-                component={Flexible}
+                component={FlexibleView}
                 options={{
                     //tabBarIcon: require("../assets/images/splash-icon.png"),
                     headerShown: false,

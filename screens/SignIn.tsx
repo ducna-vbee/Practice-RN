@@ -20,7 +20,7 @@ const SignIn = () => {
     const referenceToInputBox1 = React.useRef<TextInput | null>(null);
     const referenceToInputBox2 = React.useRef<TextInput | null>(null);
     const lastSignInTime = useSelector((state: RootState) => state.user.lastLoginTime);
-    const { loading } = useAppSelector((state) => state.user);
+    const loading = useAppSelector((state) => state.user.loading);
     useAppSelector(selectAuthenticatedStatus);
     const dispatcher = useAppDispatch();
 
@@ -142,6 +142,18 @@ const SignIn = () => {
                         <View></View>
                     )}
                     <TouchableOpacity
+                        onPress={() => {
+                            navigator.navigate("SignUp" as never);
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#0044ff',
+                                fontSize: 12,
+                            }}
+                        >{"Don't have an account? Sign Up"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={{
                             borderWidth: 2,
                             borderColor: '#FFFFFF',
@@ -182,18 +194,6 @@ const SignIn = () => {
                             }
                         }}
                     >
-                        <TouchableOpacity
-                            onPress={() => {
-                                navigator.navigate("SignUp" as never);
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    color: '#0044ff',
-                                    fontSize: 12,
-                                }}
-                            >{"Don't have an account? Sign Up"}</Text>
-                        </TouchableOpacity>
                         {(loading === true) ? (
                             <ActivityIndicator
                                 color={'#FFFFFF'}

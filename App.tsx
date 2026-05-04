@@ -20,6 +20,7 @@ import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
+import ErrorBoundary from "./screens/ErrorBoundary";
 import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
@@ -192,34 +193,36 @@ const App = () => {
 
 	return (
 		<SafeAreaProvider>
-			<PersistGate loading={null} persistor={persistor}>
-				{(offlineState === false) ? (
-					<Provider store={store}>
-						<MainLayout/>
-					</Provider>
-				) : (
-					<View 
-						style={{ 
-							flex: 1,
-							width: '100%',
-							height: '100%',
-							backgroundColor: 'red',
-							padding: 10,
-							display: 'flex',
-							flexDirection: 'column',
-							justifyContent: 'center',
-							alignItems: 'center',
-						}}>
-						<Text
-							style={{
-								fontSize: 20,
-								color: '#c2c2c2',
-								textAlign: 'center'
-							}}
-						>{"No Internet Connection"}</Text>
-					</View>
-				)}
-			</PersistGate>
+			<ErrorBoundary>
+				<PersistGate loading={null} persistor={persistor}>
+					{(offlineState === false) ? (
+						<Provider store={store}>
+							<MainLayout/>
+						</Provider>
+					) : (
+						<View 
+							style={{ 
+								flex: 1,
+								width: '100%',
+								height: '100%',
+								backgroundColor: 'red',
+								padding: 10,
+								display: 'flex',
+								flexDirection: 'column',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}>
+							<Text
+								style={{
+									fontSize: 20,
+									color: '#c2c2c2',
+									textAlign: 'center'
+								}}
+							>{"No Internet Connection"}</Text>
+						</View>
+					)}
+				</PersistGate>
+			</ErrorBoundary>
 		</SafeAreaProvider>
 	);
 };

@@ -1,6 +1,10 @@
+import FlexibleView from "@/screens/FlexibleView";
 import ImageView from "@/screens/ImageView";
+import ImmutableCounterView from "@/screens/ImmutableCounterView";
 import ListView from "@/screens/ListView";
+import MutableContextView from "@/screens/MutableContext";
 import NumberView from "@/screens/NumberView";
+import ReferenceView from "@/screens/ReferenceView";
 import RootStackParamList from "@/screens/RootStackParamList";
 import Settings from "@/screens/Settings";
 import { useNavigation } from "@react-navigation/native";
@@ -32,8 +36,29 @@ const ViewStack = () => {
                 }}
             />
             <ScreenStackNavigator.Screen
-                name="Settings"
-                component={Settings}
+                name="ReferenceView"
+                component={ReferenceView}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <ScreenStackNavigator.Screen
+                name="FlexibleView"
+                component={FlexibleView}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <ScreenStackNavigator.Screen
+                name="ImmutableCounterView"
+                component={ImmutableCounterView}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <ScreenStackNavigator.Screen
+                name="MutableContextView"
+                component={MutableContextView}
                 options={{
                     headerShown: false,
                 }}
@@ -55,8 +80,14 @@ const ViewStack = () => {
                         </TouchableOpacity>
                     ),
                 }}
-            >
-            </ScreenStackNavigator.Screen>
+            />
+            <ScreenStackNavigator.Screen
+                name="Settings"
+                component={Settings}
+                options={{
+                    headerShown: false,
+                }}
+            />
         </ScreenStackNavigator.Navigator>
     );
 };

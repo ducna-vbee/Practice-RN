@@ -2,7 +2,7 @@ import ScreenDimensionContext from "@/contexts/ScreenDimensionContext";
 import React from "react";
 import { StyleSheet,View } from "react-native";
 
-const Flexible = () => {
+const FlexibleView = () => {
     const {
         screenWidth,
         screenHeight,
@@ -61,4 +61,4 @@ const Styles = StyleSheet.create({
     },
 });
 
-export default Flexible;
+export default FlexibleView;
