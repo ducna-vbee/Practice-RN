@@ -168,18 +168,18 @@ const Counter = () => {
 	};
 
 	React.useEffect(() => {
-		// const unsubscribeFocus = navigator.addListener('focus',() => {
-		// 	console.log('Screen is active - Start Timer');
-		// });
+		const unsubscribeFocus = navigator.addListener('focus',() => {
+			console.log('Screen is active - Start Timer');
+		});
 
-		// const unsubscribeBlur = navigator.addListener('blur',() => {
-		// 	console.log('Screen is background - Pause Timer');
-		// });	
+		const unsubscribeBlur = navigator.addListener('blur',() => {
+			console.log('Screen is background - Pause Timer');
+		});	
 
-		// return () => {
-		// 	unsubscribeFocus();
-		// 	unsubscribeBlur();
-		// };
+		return () => {
+			unsubscribeFocus();
+			unsubscribeBlur();
+		};
 	},[navigator]);
 
 	const verifyEmail = React.useCallback((value: string,verbose: boolean) => {

@@ -6,7 +6,7 @@
  */
 
 import NetInfo from "@react-native-community/netinfo";
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator,DrawerContentScrollView,DrawerItemList } from '@react-navigation/drawer';
 import { NavigationContainer,useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Linking from 'expo-linking';
@@ -34,14 +34,69 @@ const ApplicationScreenNavigationStack = createNativeStackNavigator();
 const ApplicationNavigationDrawerShell = createDrawerNavigator();
 
 
-const linking = {
-	prefixes: [Linking.createURL('/')],
+const DeepLinking = {
+	prefixes: [
+		Linking.createURL('/'),
+	],
 	config: {
 		screens: {
-			ListView: 'list_view',
+			ListView: 'list',
+        	NumberView: 'number/:content',
 			Settings: 'settings',
 		},
 	},
+};
+
+const ListenerLinking = {
+    prefixes: [
+		Linking.createURL('/'),
+	],
+    subscribe(listener: (url: string) => void) {
+        function processReceiveURL({ url }: { url: string })
+		{
+            console.log("Listener Link intercepted:", url);
+            const parsedURL = Linking.parse(url);
+
+            if ((parsedURL.path != null) && (parsedURL.path.includes("number") === true))
+			{
+                const content = parsedURL.queryParams?.content;
+
+                if (content !== undefined)
+				{
+                    const normalizedUrl = Linking.createURL(`number/${content}`);
+
+                    return listener(normalizedUrl);
+                }
+            }
+
+            listener(url);
+        };
+
+        const subscription = Linking.addEventListener('url', processReceiveURL);
+
+        async function checkInitialURL()
+		{
+            const initialUrl = await Linking.getInitialURL();
+
+            if (initialUrl != null)
+			{
+                listener(initialUrl);
+            }
+        }
+        
+        checkInitialURL();
+
+        return () => {
+            subscription.remove();
+        };
+    },
+    config: {
+        screens: {
+            ListView: 'list',
+        	NumberView: 'number/:content',
+			Settings: 'settings',
+        },
+    },
 };
 
 const MainLayout = () => {
@@ -58,22 +113,21 @@ const MainLayout = () => {
 	const [expoPushToken,setExpoPushToken] = React.useState('');
 	const [channels,setChannels] = React.useState<Notifications.NotificationChannel[]>([]);
 	const [notification,setNotification] = React.useState<Notifications.Notification | undefined>(undefined);
-	
-	function useNotifications()
-	{
+
+	function useNotifications() {
 		const navigation = useNavigation();
 		const notificationListener = React.useRef<any>(null);
 		const responseListener = React.useRef<any>(null);
 
 		React.useEffect(() => {
 			notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-				console.log("Notification Received in Foreground:", notification);
+				console.log("Notification Received in Foreground:",notification);
 			});
 
 			responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-				const { screen, params } = response.notification.request.content.data;
-				
-				console.log("User tapped notification with data:", response.notification.request.content.data);
+				const { screen,params } = response.notification.request.content.data;
+
+				console.log("User tapped notification with data:",response.notification.request.content.data);
 
 				if (screen)
 				{
@@ -86,9 +140,9 @@ const MainLayout = () => {
 
 			return () => {
 				notificationListener.current.remove();
-			responseListener.current.remove();
+				responseListener.current.remove();
 			};
-		}, [navigation]);
+		},[navigation]);
 	};
 
 	// const userCredentialAuthenticationContext = React.useMemo(() => ({
@@ -170,11 +224,50 @@ const MainLayout = () => {
 						}}
 					>
 						<NavigationContainer
-							linking={linking}
+							linking={ListenerLinking}
 						>
 							{(token !== null) ? (
 								<ApplicationNavigationDrawerShell.Navigator
 									initialRouteName="ApplicationBottomNavigationTab"
+									screenOptions={{
+										swipeEnabled: true,
+									}}
+									drawerContent={(props) => {
+										return (
+											<DrawerContentScrollView 
+												{...props}
+												contentContainerStyle={{
+													flex: 1,
+												}}
+											>
+												<View 
+													style={{
+														flex: 1,
+													}}
+												>
+													<DrawerItemList {...props} />
+												</View>
+
+												<View
+													style={{
+														padding: 20,
+														justifyContent: 'center',
+														alignItems: 'center',
+														borderTopWidth: 1,
+														borderTopColor: '#f4f4f4'
+													}}
+												>
+													<Text
+														style={{
+															fontSize: 32,
+															fontWeight: '800',
+															color: '#0F0F0F'
+														}}
+													>{"PracticeRN"}</Text>
+												</View>
+											</DrawerContentScrollView>
+										);
+									}}
 								>
 									<ApplicationNavigationDrawerShell.Screen
 										name="ApplicationBottomNavigationTab"
@@ -188,6 +281,7 @@ const MainLayout = () => {
 										component={Settings}
 										options={{
 											headerShown: true,
+											swipeEnabled: false,
 										}}
 									/>
 								</ApplicationNavigationDrawerShell.Navigator>

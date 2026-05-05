@@ -17,6 +17,18 @@ const ScreenStackNavigator = createNativeStackNavigator<RootStackParamList>();
 const ViewStack = () => {
     const navigator = useNavigation();
 
+    React.useEffect(() => {
+        navigator?.setOptions({
+            tabBarStyle: {
+                display: "none"
+            }
+        });
+
+        return () => navigator?.setOptions({
+            tabBarStyle: undefined
+        });
+    },[navigator]);
+
     return (
         <ScreenStackNavigator.Navigator
             initialRouteName="ListView"
@@ -79,6 +91,9 @@ const ViewStack = () => {
                             <Text>Info</Text>
                         </TouchableOpacity>
                     ),
+                }}
+                initialParams={{
+                    content: 0,
                 }}
             />
             <ScreenStackNavigator.Screen

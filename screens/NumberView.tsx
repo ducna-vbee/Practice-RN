@@ -1,4 +1,5 @@
-import { RouteProp,StackActions,useNavigation,useRoute } from "@react-navigation/native";
+import { RouteProp,StackActions,useFocusEffect,useNavigation,useRoute } from "@react-navigation/native";
+import React from "react";
 import { Text,TouchableOpacity,View } from "react-native";
 import RootStackParamList from "../navigations/RootStackParamList";
 
@@ -6,6 +7,13 @@ const NumberView = () => {
     const navigator = useNavigation();
     const route = useRoute<RouteProp<RootStackParamList, 'NumberView'>>();
     const content: {content: number} = route.params;
+
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log("Screen Focused - Content:", content);
+            return () => console.log("Screen Blurred");
+        }, [content])
+    );
 
     return (
         <View

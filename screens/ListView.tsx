@@ -325,6 +325,7 @@ const ListView = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    gap: 10,
                 }}
             >
                 <TouchableOpacity
@@ -382,8 +383,15 @@ const ListView = () => {
                     }}
                     onPress={() => {
                         navigator.dispatch(StackActions.push("NumberView",{
-                            content: 123456,
+                            content: 123,
                         }));
+
+                        // navigator.navigate({
+                        //     name: "NumberView",
+                        //     params: {
+                        //         content: 123,
+                        //     }
+                        // } as never);
                     }}
                 >
                     <Text
@@ -392,6 +400,27 @@ const ListView = () => {
                             fontSize: 16,
                         }}
                     >{"Number View"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                        paddingTop: 4,
+                        paddingBottom: 4,
+                        borderRadius: 1000,
+                        borderWidth: 2,
+                        borderColor: '#0F0F0F',
+                    }}
+                    onPress={() => {
+                        navigator.navigate("Counter" as never);
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontWeight: 700,
+                            fontSize: 16,
+                        }}
+                    >{"Counter"}</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
