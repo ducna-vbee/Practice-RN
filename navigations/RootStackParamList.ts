@@ -8,6 +8,7 @@ type RootStackParamList = {
     ImmutableCounterView: undefined;
     MutableContextView: undefined;
     Settings: undefined;
+    CustomNavigationTab: undefined;
 };
 
 export default RootStackParamList;

@@ -1,8 +1,10 @@
 import RootStackParamList from "@/navigations/RootStackParamList";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
 import { SectionList,Text,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CustomBottomTab from "./CustomBottomTab";
 
 const sampleDataWithSections = [
     {
@@ -23,8 +25,38 @@ const sampleDataWithSections = [
     },
 ];
 
+const CustomChildScreen = ({numberOrder}: {numberOrder: number}) => {
+    return (
+        <View
+            style={{
+                flex: 1,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+        >
+            <Text
+                style={{
+                    fontSize: 30,
+                    fontWeight: 800,
+                }}
+            >ChildScreen {numberOrder}</Text>
+        </View>
+    );
+};
+
 const SectionView = () => {
     const navigator = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const [activeIndex,setActiveIndex] = React.useState(0);
+    const contentReference: React.Ref<View> = React.useRef(null);
+
+    function changeScreenComponent(index: number): void
+    {
+        setActiveIndex(index);
+    }
 
     return (
         <SafeAreaView
@@ -49,58 +81,85 @@ const SectionView = () => {
                     alignItems: 'center',
                 }}
             >
-                <SectionList
-                    sections={sampleDataWithSections}
-                    keyExtractor={(item, index) => item + index}
-                    renderItem={({item}) => (
-                        <View   
-                            style={{
-                                flex: 3,
-                                width: '100%',
-                                height: '100%',
-                                maxHeight: 100,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Text 
-                                style={{
-                                    fontSize: 14,
-                                    color: '#0F0F0F',
-                                }}
-                            >{item}</Text>
-                        </View>
-                    )}
-                    renderSectionHeader={({section: {title}}) => (
-                        <View   
-                            style={{
-                                flex: 3,
-                                width: '100%',
-                                height: '100%',
-                                maxHeight: 100,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Text 
-                                style={{
-                                    fontWeight: 800,
-                                    fontSize: 16,
-                                    color: '#0F0F0F',
-                                }}
-                            >{title}</Text>
-                        </View>
-                    )}
+                <View
                     style={{
                         flex: 1,
                         width: '100%',
                         height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
                     }}
-                />
+                >
+                    <SectionList
+                        sections={sampleDataWithSections}
+                        keyExtractor={(item, index) => item + index}
+                        renderItem={({item}) => (
+                            <View   
+                                style={{
+                                    flex: 3,
+                                    width: '100%',
+                                    height: '100%',
+                                    maxHeight: 100,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text 
+                                    style={{
+                                        fontSize: 14,
+                                        color: '#0F0F0F',
+                                    }}
+                                >{item}</Text>
+                            </View>
+                        )}
+                        renderSectionHeader={({section: {title}}) => (
+                            <View   
+                                style={{
+                                    flex: 3,
+                                    width: '100%',
+                                    height: '100%',
+                                    maxHeight: 100,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text 
+                                    style={{
+                                        fontWeight: 800,
+                                        fontSize: 16,
+                                        color: '#0F0F0F',
+                                    }}
+                                >{title}</Text>
+                            </View>
+                        )}
+                        style={{
+                            flex: 1,
+                            width: '100%',
+                            height: '100%',
+                        }}
+                    />
+                </View>
+                <View
+                    style={{
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <CustomChildScreen
+                        numberOrder={activeIndex}
+                    />
+                </View>
             </View>
             <View
                 style={{
@@ -158,6 +217,19 @@ const SectionView = () => {
                     >{"Back"}</Text>
                 </TouchableOpacity>
             </View>
+            <CustomBottomTab
+                width={'100%'}
+                height={50}
+                visibility={true}
+                backgroundColor={'#00d9ff'}
+                numberOfTabs={3}
+                minTabWidth={40}
+                maxTabWidth={60}
+                labels={["First","Second","Third"]}
+                iconSize={30}
+                iconURIs={["../assets/images/icon.png","../assets/images/icon.png","../assets/images/icon.png"]}
+                setActiveIndex={setActiveIndex}
+            />
         </SafeAreaView>
     );
 };

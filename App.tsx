@@ -37,7 +37,6 @@ const AdditionalBottomTab = createBottomTabNavigator();
 const ApplicationScreenNavigationStack = createNativeStackNavigator();
 const ApplicationNavigationDrawerShell = createDrawerNavigator();
 
-
 const DeepLinking = {
 	prefixes: [
 		Linking.createURL('/'),

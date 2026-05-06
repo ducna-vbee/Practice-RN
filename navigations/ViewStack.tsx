@@ -15,6 +15,7 @@ import { Text,TouchableOpacity } from "react-native";
 
 const ScreenStackNavigator = createNativeStackNavigator<RootStackParamList>();
 
+
 const ViewStack = () => {
     const navigator = useNavigation();
 
@@ -32,7 +33,7 @@ const ViewStack = () => {
 
     return (
         <ScreenStackNavigator.Navigator
-            initialRouteName="ListView"
+            initialRouteName="CustomNavigationTab"
         >
             <ScreenStackNavigator.Screen
                 name="ImageView"
