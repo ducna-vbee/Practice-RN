@@ -4,7 +4,7 @@ import { StyleSheet,Text,TouchableOpacity,View } from "react-native";
 
 function createReferenceAnonymously(): {current: View | null}
 {
-    console.log("created a newly anonymous reference");
+    //console.log("created a newly anonymous reference");
 
     return {
         current: null as View | null,
@@ -15,7 +15,7 @@ let anonymousReference = createReferenceAnonymously();
 
 function createReferencePersistently() : RefObject<View|null>
 {
-    console.log("created a newly persistent reference");
+    //console.log("created a newly persistent reference");
 
     return React.createRef<View>();
 }

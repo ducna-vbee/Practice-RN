@@ -6,6 +6,7 @@
  */
 
 import NetInfo from "@react-native-community/netinfo";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator,DrawerContentScrollView,DrawerItemList } from '@react-navigation/drawer';
 import { NavigationContainer,useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -21,6 +22,8 @@ import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
 import ThemeContext from './contexts/ThemeContext';
 import ApplicationBottomNavigationTab from './navigations/BottomTab';
+import Dangle1 from "./screens/Dangle1";
+import Dangle2 from "./screens/Dangle2";
 import ErrorBoundary from "./screens/ErrorBoundary";
 import { registerForPushNotificationsAsync } from "./screens/PushNotifications";
 import ResetPassword from "./screens/ResetPassword";
@@ -30,6 +33,7 @@ import SignUp from "./screens/SignUp";
 import { persistor,store,useAppSelector } from './store';
 
 
+const AdditionalBottomTab = createBottomTabNavigator();
 const ApplicationScreenNavigationStack = createNativeStackNavigator();
 const ApplicationNavigationDrawerShell = createDrawerNavigator();
 
@@ -97,6 +101,86 @@ const ListenerLinking = {
 			Settings: 'settings',
         },
     },
+};
+
+const AdditionalNavigationBottomTab = () => {
+	return (
+		<AdditionalBottomTab.Navigator
+			initialRouteName="Dangle1"
+		>
+			<AdditionalBottomTab.Screen
+				name="Dangle1"
+				component={Dangle1}
+			/>
+			<AdditionalBottomTab.Screen
+				name="Dangle2"
+				component={Dangle2}
+			/>
+		</AdditionalBottomTab.Navigator>
+	);
+};
+
+const ApplicationNavigationDrawer = () => {
+	return (
+		<ApplicationNavigationDrawerShell.Navigator
+			initialRouteName="ApplicationBottomNavigationTab"
+			screenOptions={{
+				swipeEnabled: true,
+			}}
+			drawerContent={(props) => {
+				return (
+					<DrawerContentScrollView 
+						{...props}
+						contentContainerStyle={{
+							flex: 1,
+						}}
+					>
+						<View 
+							style={{
+								flex: 1,
+							}}
+						>
+							<DrawerItemList {...props} />
+						</View>
+
+						<View
+							style={{
+								padding: 20,
+								justifyContent: 'center',
+								alignItems: 'center',
+								borderTopWidth: 1,
+								borderTopColor: '#f4f4f4'
+							}}
+						>
+							<Text
+								style={{
+									fontSize: 32,
+									fontWeight: '800',
+									color: '#0F0F0F'
+								}}
+							>{"PracticeRN"}</Text>
+						</View>
+					</DrawerContentScrollView>
+				);
+			}}
+		>
+			<ApplicationNavigationDrawerShell.Screen
+				name="ApplicationBottomNavigationTab"
+				component={ApplicationBottomNavigationTab}
+				options={{
+					headerShown: true,
+				}}
+			/>
+			<ApplicationNavigationDrawerShell.Screen
+				name="Settings"
+				component={Settings}
+				options={{
+					headerShown: true,
+					swipeEnabled: false,
+				}}
+			/>
+		</ApplicationNavigationDrawerShell.Navigator>
+	);
 };
 
 const MainLayout = () => {
@@ -227,64 +311,24 @@ const MainLayout = () => {
 							linking={ListenerLinking}
 						>
 							{(token !== null) ? (
-								<ApplicationNavigationDrawerShell.Navigator
-									initialRouteName="ApplicationBottomNavigationTab"
-									screenOptions={{
-										swipeEnabled: true,
-									}}
-									drawerContent={(props) => {
-										return (
-											<DrawerContentScrollView 
-												{...props}
-												contentContainerStyle={{
-													flex: 1,
-												}}
-											>
-												<View 
-													style={{
-														flex: 1,
-													}}
-												>
-													<DrawerItemList {...props} />
-												</View>
-
-												<View
-													style={{
-														padding: 20,
-														justifyContent: 'center',
-														alignItems: 'center',
-														borderTopWidth: 1,
-														borderTopColor: '#f4f4f4'
-													}}
-												>
-													<Text
-														style={{
-															fontSize: 32,
-															fontWeight: '800',
-															color: '#0F0F0F'
-														}}
-													>{"PracticeRN"}</Text>
-												</View>
-											</DrawerContentScrollView>
-										);
-									}}
+								<ApplicationScreenNavigationStack.Navigator
+									initialRouteName="ApplicationNavigationDrawer"
 								>
-									<ApplicationNavigationDrawerShell.Screen
-										name="ApplicationBottomNavigationTab"
-										component={ApplicationBottomNavigationTab}
+									<ApplicationScreenNavigationStack.Screen
+										name="ApplicationNavigationDrawer"
+										component={ApplicationNavigationDrawer}
 										options={{
-											headerShown: true,
+											headerShown: false,
 										}}
 									/>
-									<ApplicationNavigationDrawerShell.Screen
-										name="Settings"
-										component={Settings}
+									<ApplicationScreenNavigationStack.Screen
+										name="AdditionalNavigationBottomTab"
+										component={AdditionalNavigationBottomTab}
 										options={{
-											headerShown: true,
-											swipeEnabled: false,
+											headerShown: false,
 										}}
 									/>
-								</ApplicationNavigationDrawerShell.Navigator>
+								</ApplicationScreenNavigationStack.Navigator>
 							) : (
 								<ApplicationScreenNavigationStack.Navigator
 									initialRouteName="SignIn"

@@ -29,9 +29,7 @@ const IconWithBadge = ({ badgeCount,color,size }: { badgeCount: number,color: Co
         {(badgeCount > 0) && (
             <View
                 style={{
-                    position: 'absolute',
                     right: -6,
-                    top: -3,
                     backgroundColor: '#ff0000',
                     borderRadius: 6,
                     width: 12,
@@ -105,7 +103,7 @@ const ApplicationBottomNavigationTab = () => {
                     headerShown: true,
                     tabBarIcon: ({ color,size }) => (
                         <IconWithBadge
-                            badgeCount={100}
+                            badgeCount={10}
                             color={color}
                             size={size}
                         />
@@ -130,7 +128,8 @@ const ApplicationBottomNavigationTab = () => {
                         </SafeAreaView>
                     ),
                     headerStyle: {
-                        borderColor: '#0F0F0F'
+                        borderColor: '#0F0F0F',
+                        borderWidth: 1,
                     }
                 }}
             />
@@ -146,6 +145,8 @@ const ApplicationBottomNavigationTab = () => {
                                 style={{
                                     width: '100%',
                                     height: '100%',
+                                    position: 'absolute',
+                                    top: 100,
                                     aspectRatio: 1 / 1,
                                     tintColor: '#FFFFFF',
                                 }}

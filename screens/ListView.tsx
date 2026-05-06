@@ -289,7 +289,7 @@ const ListView = () => {
         >
             <View
                 style={{
-                    flex: 4,
+                    flex: 3,
                     width: '100%',
                     height: '100%',
                     display: 'flex',
@@ -328,100 +328,168 @@ const ListView = () => {
                     gap: 10,
                 }}
             >
-                <TouchableOpacity
+                <View
                     style={{
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        paddingTop: 4,
-                        paddingBottom: 4,
-                        borderRadius: 1000,
-                        borderWidth: 2,
-                        borderColor: '#0F0F0F',
-                    }}
-                    onPress={() => {
-                        fetchData(dataSampleURL);
-                        //fetchDataWithServices();
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: 10,
                     }}
                 >
-                    <Text
+                    <TouchableOpacity
                         style={{
-                            fontWeight: 700,
-                            fontSize: 16,
+                            paddingLeft: 16,
+                            paddingRight: 16,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
                         }}
-                    >{"Fetch"}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        paddingTop: 4,
-                        paddingBottom: 4,
-                        borderRadius: 1000,
-                        borderWidth: 2,
-                        borderColor: '#0F0F0F',
-                    }}
-                    onPress={() => {
-                        navigator.navigate("ImageView" as never);
-                    }}
-                >
-                    <Text
+                        onPress={() => {
+                            fetchData(dataSampleURL);
+                            //fetchDataWithServices();
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                            }}
+                        >{"Fetch"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={{
-                            fontWeight: 700,
-                            fontSize: 16,
+                            paddingLeft: 16,
+                            paddingRight: 16,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
                         }}
-                    >{"Image View"}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        paddingTop: 4,
-                        paddingBottom: 4,
-                        borderRadius: 1000,
-                        borderWidth: 2,
-                        borderColor: '#0F0F0F',
-                    }}
-                    onPress={() => {
-                        navigator.dispatch(StackActions.push("NumberView",{
-                            content: 123,
-                        }));
+                        onPress={() => {
+                            navigator.navigate("ImageView" as never);
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                            }}
+                        >{"Image View"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            paddingLeft: 16,
+                            paddingRight: 16,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
+                        }}
+                        onPress={() => {
+                            navigator.dispatch(StackActions.push("NumberView",{
+                                content: 123,
+                            }));
 
-                        // navigator.navigate({
-                        //     name: "NumberView",
-                        //     params: {
-                        //         content: 123,
-                        //     }
-                        // } as never);
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontWeight: 700,
-                            fontSize: 16,
+                            // navigator.navigate({
+                            //     name: "NumberView",
+                            //     params: {
+                            //         content: 123,
+                            //     }
+                            // } as never);
                         }}
-                    >{"Number View"}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                    >
+                        <Text
+                            style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                            }}
+                        >{"Number View"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            paddingLeft: 16,
+                            paddingRight: 16,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
+                        }}
+                        onPress={() => {
+                            navigator.navigate("Counter" as never);
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                            }}
+                        >{"Counter"}</Text>
+                    </TouchableOpacity>
+                </View>
+                <View
                     style={{
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        paddingTop: 4,
-                        paddingBottom: 4,
-                        borderRadius: 1000,
-                        borderWidth: 2,
-                        borderColor: '#0F0F0F',
-                    }}
-                    onPress={() => {
-                        navigator.navigate("Counter" as never);
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: 10,
                     }}
                 >
-                    <Text
+                    <TouchableOpacity
                         style={{
-                            fontWeight: 700,
-                            fontSize: 16,
+                            paddingLeft: 16,
+                            paddingRight: 16,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
                         }}
-                    >{"Counter"}</Text>
-                </TouchableOpacity>
+                        onPress={() => {
+                            navigator.goBack();
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                            }}
+                        >{"Back"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            paddingLeft: 16,
+                            paddingRight: 16,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            borderRadius: 1000,
+                            borderWidth: 2,
+                            borderColor: '#0F0F0F',
+                        }}
+                        onPress={() => {
+                            navigator.dispatch(StackActions.push("AdditionalNavigationBottomTab"));
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontWeight: 700,
+                                fontSize: 16,
+                            }}
+                        >{"Dangle"}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </SafeAreaView>
     );

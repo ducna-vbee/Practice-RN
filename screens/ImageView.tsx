@@ -1,4 +1,6 @@
-import { CommonActions,StackActions,useNavigation } from "@react-navigation/native";
+import RootStackParamList from "@/navigations/RootStackParamList";
+import { CommonActions,DrawerActions,StackActions,useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import { DimensionValue,Image,StyleProp,Text,TouchableOpacity,View,ViewStyle } from "react-native";
 
@@ -45,7 +47,7 @@ const HeavyImage = ({ size }: { size: DimensionValue }) => {
 const MemorizedHeavyImage = React.memo(HeavyImage);
 
 function createTopLevelStyle() {
-	console.log("Top-level style re-created!");
+	//console.log("Top-level style re-created!");
 
 	return {
 		width: '100%',
@@ -59,7 +61,7 @@ function createTopLevelStyle() {
 }
 
 const ImageView = () => {
-	const navigator = useNavigation();
+	const navigator = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 	const topLevelStyle = createTopLevelStyle();
 	const [count,setCount] = React.useState(0);
 
@@ -77,105 +79,247 @@ const ImageView = () => {
 		<View
 			style={topLevelStyle as StyleProp<ViewStyle>}
 		>
-			<TouchableOpacity
+			<View
 				style={{
-					paddingLeft: 16,
-					paddingRight: 16,
-					paddingTop: 4,
-					paddingBottom: 4,
-					borderRadius: 1000,
-					borderWidth: 2,
-					borderColor: '#0F0F0F',
-				}}
-				onPress={() => {
-					navigator.navigate("ImageView" as never);
+					flex: 1,
+					width: '100%',
+					height: '100%',
+					display: 'flex',
+					flexDirection: 'row',
+					justifyContent: 'center',
+					alignItems: 'center',
+					gap: 10,
 				}}
 			>
-				<Text
+				<TouchableOpacity
 					style={{
-						fontWeight: 700,
-						fontSize: 16,
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
 					}}
-				>{"Image View"}</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
+					onPress={() => {
+						navigator.navigate("NumberView",{
+							content: 100,
+						});
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"NumberView"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
+					}}
+					onPress={() => {
+						// if (navigator.canGoBack() === true)
+						// {
+						// 	navigator.goBack();
+						// }
+
+						const navigationState = navigator.getState();
+
+						if ((navigationState !== undefined) && (navigationState.index > 0))
+						{
+							// console.log(navigationState.routes);
+							// const previousRoute = (navigationState.routes)[navigationState.index - 1];
+							// const previousRouteName = previousRoute.name;
+							// navigator.dispatch(CommonActions.navigate(previousRouteName));
+
+							//console.log(navigator.getParent()?.getParent()?.getParent()?.getState().routes);
+							// navigator.getParent()?.getParent()?.getParent()?.dispatch(StackActions.push("AdditionalNavigationBottomTab"));
+
+							// navigator.navigate("AdditionalNavigationBottomTab", {
+							// 	screen: "Dangle2", 
+							// });
+							navigator.goBack();
+						}
+						else
+						{
+							console.log("Can't go back anymore!");
+						}
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"Go Back"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
+					}}
+					onPress={() => {
+						navigator.dispatch(StackActions.pop(3));
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"Jump 3"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
+					}}
+					onPress={() => {
+						navigator.navigate("SectionView");
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"SectionView"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
+					}}
+					onPress={() => {
+						const state = navigator.getState();
+						if (state != null)
+						{
+							const currentRoute = state.routes[state.index];
+							const otherRoutes = state.routes.filter(result => (result.key !== currentRoute.key));
+
+							navigator.dispatch(
+								CommonActions.reset({
+									index: otherRoutes.length,
+									routes: [
+										{ 
+											name: currentRoute.name,
+											params: currentRoute.params,
+										},
+										...otherRoutes
+									] as any,
+								}),
+							);
+						}
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"Sneak"}</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={{
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
+					}}
+					onPress={() => {
+						navigator.reset({
+							index: 1,
+							routes: [
+								{
+									name: "ImageView",
+								},
+								{
+									name: "ListView",
+								},
+							] as never[],
+						});
+
+						// navigator.dispatch(CommonActions.reset({
+						// 	index: 0,
+						// 	routes: [
+						// 		{ name: 'Counter' },
+						// 	],
+						// }));
+					}}
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"Reset"}</Text>
+				</TouchableOpacity>
+			</View>
+			<View
 				style={{
-					paddingLeft: 16,
-					paddingRight: 16,
-					paddingTop: 4,
-					paddingBottom: 4,
-					borderRadius: 1000,
-					borderWidth: 2,
-					borderColor: '#0F0F0F',
-				}}
-				onPress={() => {
-					// if (navigator.canGoBack() === true)
-					// {
-					// 	navigator.goBack();
-					// }
-
-					const navigationState = navigator.getState();
-
-					if ((navigationState !== undefined) && (navigationState.index > 0))
-					{
-						const previousRoute = (navigationState.routes)[navigationState.index - 1];
-						const previousRouteName = previousRoute.name;
-						navigator.navigate(previousRouteName as never);
-						navigator.dispatch(StackActions.pop(2));
-					}
-					else
-					{
-						console.log("Can't go back anymore!");
-					}
+					flex: 3,
+					width: '100%',
+					height: '100%',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+					alignItems: 'center',
 				}}
 			>
-				<Text
+				<MemorizedHeavyImage
+					size={100}
+				/>
+				<HeavyImage
+					size={100}
+				/>
+				<TouchableOpacity
 					style={{
-						fontWeight: 700,
-						fontSize: 16,
+						borderRadius: 1000,
+						borderWidth: 2,
+						borderColor: '#0F0F0F',
+						paddingLeft: 16,
+						paddingRight: 16,
+						paddingTop: 4,
+						paddingBottom: 4,
+						bottom: 10,
 					}}
-				>{"Go Back"}</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={{
-					paddingLeft: 16,
-					paddingRight: 16,
-					paddingTop: 4,
-					paddingBottom: 4,
-					borderRadius: 1000,
-					borderWidth: 2,
-					borderColor: '#0F0F0F',
-				}}
-				onPress={() => {
-					navigator.reset({
-						index: 0,
-						routes: [
-							{
-								name: "Counter",
-							},
-						] as never[],
-					});
-
-					navigator.dispatch(CommonActions.reset({
-						index: 0,
-						routes: [{ name: 'Counter' }],
-					}));
-
-				}}
-			>
-				<Text
-					style={{
-						fontWeight: 700,
-						fontSize: 16,
+					onPress={() => {
+						navigator.dispatch(DrawerActions.toggleDrawer());
 					}}
-				>{"Reset"}</Text>
-			</TouchableOpacity>
-			<MemorizedHeavyImage
-				size={100}
-			/>
-			<HeavyImage
-				size={100}
-			/>
+				>
+					<Text
+						style={{
+							fontWeight: 700,
+							fontSize: 16,
+						}}
+					>{"Toggle Drawer"}</Text>
+				</TouchableOpacity>
+			</View>
 		</View>
 	);
 };

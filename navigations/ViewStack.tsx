@@ -6,6 +6,7 @@ import ListView from "@/screens/ListView";
 import MutableContextView from "@/screens/MutableContext";
 import NumberView from "@/screens/NumberView";
 import ReferenceView from "@/screens/ReferenceView";
+import SectionView from "@/screens/SectionView";
 import Settings from "@/screens/Settings";
 import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -62,6 +63,13 @@ const ViewStack = () => {
                 }}
             />
             <ScreenStackNavigator.Screen
+                name="SectionView"
+                component={SectionView}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <ScreenStackNavigator.Screen
                 name="ImmutableCounterView"
                 component={ImmutableCounterView}
                 options={{
@@ -87,13 +95,12 @@ const ViewStack = () => {
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
-                        <TouchableOpacity onPress={() => alert('This is a right button!')}>
+                        <TouchableOpacity onPress={() => {
+                            navigator.navigate("ImageView" as never);
+                        }}>
                             <Text>Info</Text>
                         </TouchableOpacity>
                     ),
-                }}
-                initialParams={{
-                    content: 0,
                 }}
             />
             <ScreenStackNavigator.Screen
