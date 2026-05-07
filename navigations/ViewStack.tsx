@@ -33,7 +33,7 @@ const ViewStack = () => {
 
     return (
         <ScreenStackNavigator.Navigator
-            initialRouteName="CustomNavigationTab"
+            initialRouteName="ListView"
         >
             <ScreenStackNavigator.Screen
                 name="ImageView"

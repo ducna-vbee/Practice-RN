@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import { BaseURL } from '@/env';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';

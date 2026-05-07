@@ -1,9 +1,10 @@
 import AuthContext from "@/contexts/AuthContext";
 import Counter from "@/screens/Counter";
+import Network from "@/screens/Network";
 import Profile from "@/screens/Profile";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabBarProps,createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from "react";
-import { ColorValue,Image,Text,View } from 'react-native';
+import { ColorValue,Image,Text,TouchableOpacity,View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import ViewStack from "./ViewStack";
 
@@ -71,6 +72,50 @@ const IconWithBadge = ({ badgeCount,color,size }: { badgeCount: number,color: Co
     </View>
 );
 
+const CustomBottomTabBar = ({ state,descriptors,navigation,insets }: BottomTabBarProps) => {
+    return (
+        <View
+            style={{
+                height: 60,
+                backgroundColor: 'white',
+                flexDirection: 'row',
+            }}
+        >
+            {(state.routes).map((route,index) => {
+                return (
+                    <TouchableOpacity
+                        key={route.key}
+                        onPress={() => {
+                            const emittingEvent = navigation.emit({
+                                type: 'tabPress',
+                                target: route.key,
+                                canPreventDefault: true,
+                            });
+
+                            if ((state.index !== index) && (emittingEvent.defaultPrevented === false))
+                            {
+                                navigation.navigate(route.name);
+                            }
+                        }}
+                        style={{
+                            flex: 1,
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: (state.index !== index) ? 'blue' : 'black',
+                            }}
+                        >
+                            {route.name}
+                        </Text>
+                    </TouchableOpacity>
+                );
+            })}
+        </View>
+    );
+};
+
 const ApplicationBottomNavigationTab = () => {
     const {
         userToken,
@@ -95,6 +140,14 @@ const ApplicationBottomNavigationTab = () => {
                 tabBarActiveTintColor: '#0099ff',
                 tabBarInactiveTintColor: 'gray',
             }}
+            // tabBar={({ state,descriptors,navigation,insets }: BottomTabBarProps) => (
+            //     <CustomBottomTabBar
+            //         state={state}
+            //         descriptors={descriptors}
+            //         navigation={navigation}
+            //         insets={insets}
+            //     />
+            // )}
         >
             <ApplicationBottomTabNavigator.Screen
                 name="Counter"
@@ -147,6 +200,27 @@ const ApplicationBottomNavigationTab = () => {
                                     height: '100%',
                                     position: 'absolute',
                                     top: 100,
+                                    aspectRatio: 1 / 1,
+                                    tintColor: '#FFFFFF',
+                                }}
+                            />
+                        )
+                    },
+                }}
+            />
+            <ApplicationBottomTabNavigator.Screen
+                name="Network"
+                component={Network}
+                options={{
+                    headerShown: false,
+                    tabBarBadge: 1,
+                    tabBarIcon: () => {
+                        return (
+                            <Image
+                                source={require("../assets/images/network.png")}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
                                     aspectRatio: 1 / 1,
                                     tintColor: '#FFFFFF',
                                 }}

@@ -159,7 +159,7 @@ const SectionView = () => {
                     <CustomChildScreen
                         numberOrder={activeIndex}
                     />
-                </View>
+                </View> 
             </View>
             <View
                 style={{

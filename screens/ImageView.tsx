@@ -145,7 +145,17 @@ const ImageView = () => {
 							// navigator.navigate("AdditionalNavigationBottomTab", {
 							// 	screen: "Dangle2", 
 							// });
-							navigator.goBack();
+
+							navigator.dispatch(CommonActions.navigate("AdditionalNavigationBottomTab",{
+								screen: "Dangle1",
+								params: {
+									screen: "DangleStack",
+									params: {
+
+									}
+								}
+							}));
+							//navigator.goBack();
 						}
 						else
 						{
