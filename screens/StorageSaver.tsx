@@ -2,19 +2,19 @@ import * as AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import * as SQLite from 'expo-sqlite';
 import { Text,TouchableOpacity,View } from "react-native";
-import * as MMKV from 'react-native-mmkv';
+//import * as MMKV from 'react-native-mmkv';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const StorageSaver = () => {
-    function storeViaMMKV()
-    {
-        const storage = MMKV.createMMKV();
-        const startTime = performance.now();
-        storage.set('demo_key','High Speed Data');
-        const value = storage.getString('demo_key');
-        const endTime = performance.now();
-        alert(`MMKV (Sync): ${value} saved in ${(endTime - startTime).toFixed(4)}ms`);
-    }
+    // function storeViaMMKV()
+    // {
+    //     const storage = MMKV.createMMKV();
+    //     const startTime = performance.now();
+    //     storage.set('demo_key','High Speed Data');
+    //     const value = storage.getString('demo_key');
+    //     const endTime = performance.now();
+    //     alert(`MMKV (Sync): ${value} saved in ${(endTime - startTime).toFixed(4)}ms`);
+    // }
 
     async function storeViaAsyncStorage() 
     {
@@ -27,12 +27,25 @@ const StorageSaver = () => {
 
     async function storeViaSecureStore()
     {
+        function createBigString(): string
+        {
+            let value: string = "";
+            let i = 0;
+
+            while (i < 100000)
+            {
+                value = value + "abcdefghijklmnopqrstuvwxyz";
+                i++;
+            }
+
+            return value;
+        }
+        
         try
         {
             const startTime = performance.now();
-            await SecureStore.setItemAsync('auth_token','SuperSecret123');
+            await SecureStore.setItemAsync('auth_token',createBigString());
             const value = await SecureStore.getItemAsync('auth_token');
-
             const endTime = performance.now();
             alert(`SecureStore (Encrypted): ${value} saved in ${(endTime - startTime).toFixed(4)}ms`);
         }
@@ -93,7 +106,7 @@ const StorageSaver = () => {
                     alignItems: 'center',
                 }}
             >
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={{
                         borderWidth: 2,
                         borderRadius: 1000,
@@ -112,7 +125,7 @@ const StorageSaver = () => {
                             color: '#0F0F0F',
                         }}
                     >{"MMKV"}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                     style={{
                         borderWidth: 2,

@@ -2,6 +2,7 @@ import AuthContext from "@/contexts/AuthContext";
 import Counter from "@/screens/Counter";
 import Network from "@/screens/Network";
 import Profile from "@/screens/Profile";
+import StorageSaver from "@/screens/StorageSaver";
 import { BottomTabBarProps,createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from "react";
 import { ColorValue,Image,Text,TouchableOpacity,View } from 'react-native';
@@ -218,6 +219,27 @@ const ApplicationBottomNavigationTab = () => {
                         return (
                             <Image
                                 source={require("../assets/images/network.png")}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    aspectRatio: 1 / 1,
+                                    tintColor: '#FFFFFF',
+                                }}
+                            />
+                        )
+                    },
+                }}
+            />
+            <ApplicationBottomTabNavigator.Screen
+                name="Storage"
+                component={StorageSaver}
+                options={{
+                    headerShown: false,
+                    tabBarBadge: 1,
+                    tabBarIcon: () => {
+                        return (
+                            <Image
+                                source={require("../assets/images/storage.png")}
                                 style={{
                                     width: '100%',
                                     height: '100%',

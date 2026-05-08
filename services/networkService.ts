@@ -12,13 +12,14 @@ const networkService = axios.create({
         return ((status >= 200) && (status < 300));
     },
     adapter: async (config) => {
-        if (config.url === '/mock-success') {
+        if (config.url === '/mock-success')
+        {
             return {
                 data: { message: "I am a fake response!" },
                 status: 200,
                 statusText: "OK",
                 headers: {},
-                config
+                config,
             };
         }
         
@@ -28,7 +29,7 @@ const networkService = axios.create({
         }
         else
         {
-            return (axios.defaults.adapter as (any)[])[0](config); 
+            return (axios.defaults.adapter as any[])[0]; 
         }
     }
 });
@@ -61,16 +62,20 @@ networkService.interceptors.request.use(async (config) => {
 
 networkService.interceptors.response.use(null,async (error) => {
     const { config } = error;
-    if (!config || !config.retryCount) config.retryCount = 0;
+    console.log(error);
+
+    if (!config || !config.retryCount)
+    {
+        config.retryCount = 0;
+    }
 
     if ((config.retryCount < 3) && (error.code === 'ECONNABORTED'))
     {
         config.retryCount += 1;
         const delay = Math.pow(2,config.retryCount) * 1000;
-
         console.log(`🔄 Retrying... Attempt ${config.retryCount} after ${delay}ms`);
-
         await new Promise(resolve => setTimeout(resolve,delay));
+
         return networkService(config);
     }
 

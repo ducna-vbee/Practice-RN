@@ -1,7 +1,7 @@
 import ThemeContext from "@/contexts/ThemeContext";
 import { selectAuthenticatedStatus } from "@/slices/UserSlice";
 import { useAppSelector } from "@/store";
-import { StackActions,useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Animated,Modal,Pressable,Text,TextInput,TouchableOpacity,View } from "react-native";
 import { schedulePushNotification } from "./PushNotifications";
@@ -405,9 +405,7 @@ const Counter = () => {
 					paddingBottom: 8,
 				}}
 				onPress={() => {
-					//setCrashingState(true);
-					//(navigator.getParent())?.dispatch(StackActions.push("AdditionalNavigationBottomTab"));
-					navigator.dispatch(StackActions.push("AdditionalNavigationBottomTab"));
+					setCrashingState(true);
 				}}
 			>
 				<Text
