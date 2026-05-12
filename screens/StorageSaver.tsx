@@ -104,6 +104,7 @@ const StorageSaver = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    gap: 10,
                 }}
             >
                 {/* <TouchableOpacity
