@@ -1,5 +1,7 @@
 /* eslint-disable import/no-named-as-default-member */
 import { BaseURL } from '@/env';
+import { updateToken } from '@/slices/UserSlice';
+import { store } from '@/store';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
@@ -64,7 +66,7 @@ APIClient.interceptors.response.use(
         {
             const userToken = await SecureStore.getItemAsync('user_token');
 
-            if (userToken !== null && originalRequest.retry === false)
+            if (userToken !== null && originalRequest.retry === undefined)
             {
                 if (userTokenRefreshState === true)
                 {
@@ -87,16 +89,19 @@ APIClient.interceptors.response.use(
                         baseURL: BaseURL,
                     });
                     const response = await localAxios.post("/refresh-token",{ old_token: userToken });
-                    const newToken = response.data['user_token'];
+                    const newToken = (response.data)['user_token'];
                     await SecureStore.setItemAsync('user_token',newToken);
+                    store.dispatch(updateToken({ newToken }));
                     processQueue(null,newToken);
                     originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
                     return APIClient(originalRequest);
                 }
                 catch (refreshError)
                 {
                     processQueue(refreshError,null);
                     await SecureStore.deleteItemAsync('user_token');
+
                     return Promise.reject(refreshError);
                 }
                 finally

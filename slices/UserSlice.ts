@@ -1,4 +1,5 @@
 import { createAsyncThunk,createSelector,createSlice } from '@reduxjs/toolkit';
+import * as SecureStore from 'expo-secure-store';
 
 import { authenticationService } from "@/services/authenticationService";
 import { RootState } from '@/store';
@@ -40,7 +41,7 @@ function updateLoginStateAfterSigningOut(state: any): void
     state.lastLogoutTime = new Date().toISOString();
 };
 
-const selectUser = (state: RootState) => state.user;
+export const selectUser = (state: RootState) => state.user;
 
 export const selectAuthenticatedStatus = createSelector([selectUser],(user) => {
     const result: boolean = ((user.token !== null) && (user.token.length > 0));
@@ -73,10 +74,17 @@ export const signUserIn = createAsyncThunk('user/login',async ({ email,password 
     try
     {
         const response = await authenticationService.signIn(email,password);
+        const token = response['token'];
+        console.log(token);
+
+        if (token != null)
+        {
+            await SecureStore.setItemAsync('user_token', token);
+        }
         
         return {
             email: email,
-            token: response['token'],
+            token: token,
             loading: false,
             error: null,
         };
@@ -104,10 +112,17 @@ export const signUserOut = createAsyncThunk('user/logut',async (_,thunkAPI) => {
     catch (error)
     {
         return thunkAPI.rejectWithValue({
-            message: JSON.stringify(error),
+            message: error,
         });
     }
 });
+
+export const updateToken = createAsyncThunk("user/update-token",async ({ newToken }: { newToken: string }, thunkAPI) => {
+        return {
+            token: newToken
+        };
+    }
+);
 
 const UserSlice = createSlice({
     name: 'user',
@@ -155,6 +170,18 @@ const UserSlice = createSlice({
         .addCase(signUserOut.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload as string;
+        })
+        .addCase(updateToken.pending,(state,action) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(updateToken.fulfilled,(state,action) => {
+            state.loading = false;
+            state.error = null;
+        })
+        .addCase(updateToken.rejected,(state,action) => {
+            state.loading = false;
+            state.error = (action.payload as string);
         });
     },
 });

@@ -41,7 +41,7 @@ export const authenticationService = {
         }
         catch (error)
         {
-            return ("Error during sign out: `" + JSON.stringify(error) + "`.");
+            return ("Error during sign out:" + error);
         }
     },
     getProfile: async() => {
@@ -57,7 +57,7 @@ export const authenticationService = {
                 'Content-Type': 'application/json',
                 'x-api-key': ReqResAPIKey,
             }
-        })
+        });
 
         return response.data;
     },

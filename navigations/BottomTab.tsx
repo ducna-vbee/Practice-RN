@@ -199,8 +199,6 @@ const ApplicationBottomNavigationTab = () => {
                                 style={{
                                     width: '100%',
                                     height: '100%',
-                                    position: 'absolute',
-                                    top: 100,
                                     aspectRatio: 1 / 1,
                                     tintColor: '#FFFFFF',
                                 }}
