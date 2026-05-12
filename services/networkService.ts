@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 import { BaseURL } from "@/env";
-import axios from "axios";
+import axios,{ InternalAxiosRequestConfig } from "axios";
 
 
 const networkService = axios.create({
@@ -29,25 +29,26 @@ const networkService = axios.create({
 		}
 
 		const defaultAdapter = axios.getAdapter(axios.defaults.adapter);
-    
+
 		return defaultAdapter(config);
 	},
 });
 
 let abortController: AbortController | null = null;
+let mapOfUniqueRequests = new Map<string,Promise<InternalAxiosRequestConfig<any>>>();
 
 networkService.interceptors.request.use(async (config) => {
 	console.log("Propagated request 1");
 
-	if (abortController != null)
-	{
-		abortController.abort();
-		console.log("🛑 Cancelled previous pending request");
-	}
+	// if (abortController != null)
+	// {
+	// 	abortController.abort();
+	// 	console.log("🛑 Cancelled previous pending request");
+	// }
 
-	abortController = new AbortController();
-	config.signal = abortController.signal;
-	console.log(config);
+	// abortController = new AbortController();
+	// config.signal = abortController.signal;
+	// console.log(config);
 
 	config.data = {
 		startTime: new Date(),
@@ -61,6 +62,40 @@ networkService.interceptors.request.use(async (config) => {
 	console.error("❌ [Request Error]",error);
 
 	return Promise.reject(error);
+});
+
+networkService.interceptors.request.use(async (config) => {
+	console.log("Propagated request 2");
+
+	if (config.url === "/feedback")
+	{
+
+	}
+
+	return config;
+},(error) => {
+	console.log(error);
+
+	return Promise.reject(error);
+});
+
+networkService.interceptors.request.use(async (config) => {
+    console.log("Propagated request 3");
+    const requestKey = `${config.method}:${config.url}`;
+
+    if (mapOfUniqueRequests.has(requestKey) === true)
+	{
+        console.log("♻️ Returning existing promise for", requestKey);
+
+        return mapOfUniqueRequests.get(requestKey) as Promise<InternalAxiosRequestConfig<any>>;
+    }
+
+    const configPromise = Promise.resolve(config);
+    mapOfUniqueRequests.set(requestKey,configPromise);
+
+    return configPromise; 
+}, (error) => {
+    return Promise.reject(error);
 });
 
 networkService.interceptors.response.use(null,async (error) => {

@@ -1,10 +1,15 @@
 /* eslint-disable import/no-named-as-default-member */
 import { BaseURL } from '@/env';
 import { updateToken } from '@/slices/UserSlice';
-import { store } from '@/store';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
+
+interface ResponseResolveCallback
+{
+    resolve: (value: any) => void,
+    reject: (reason: any) => void,
+};
 
 const APIClient = axios.create({
     baseURL: BaseURL,
@@ -15,10 +20,15 @@ const APIClient = axios.create({
 });
 
 let userTokenRefreshState = false;
-let failedResponseQueue: any[] = [];
+let failedResponseQueue: ResponseResolveCallback[] = [];
 
-function processQueue(error: any, token: string | null = null)
-{
+let store: any;
+
+export const initializeStore = (_store: any) => {
+    store = _store;
+};
+
+function processQueue(error: any,token: string | null = null) {
     failedResponseQueue.forEach(element => {
         if (error != null)
         {
@@ -60,7 +70,7 @@ APIClient.interceptors.response.use(
         }
         else if (status === 400)
         {
-            Alert.alert("Input Error", JSON.stringify(error) || "Please check your data.");
+            Alert.alert("Input Error",JSON.stringify(error) || "Please check your data.");
         }
         else if (status === 401)
         {
@@ -73,11 +83,11 @@ APIClient.interceptors.response.use(
                     return new Promise((resolve,reject) => {
                         failedResponseQueue.push({ resolve,reject });
                     })
-                    .then((token) => {
-                        originalRequest.headers.Authorization = `Bearer ${token}`;
-                        return APIClient(originalRequest);
-                    })
-                    .catch(error => Promise.reject(error));
+                        .then((token) => {
+                            originalRequest.headers.Authorization = `Bearer ${token}`;
+                            return APIClient(originalRequest);
+                        })
+                        .catch(error => Promise.reject(error));
                 }
 
                 originalRequest.retry = true;
@@ -91,7 +101,12 @@ APIClient.interceptors.response.use(
                     const response = await localAxios.post("/refresh-token",{ old_token: userToken });
                     const newToken = (response.data)['user_token'];
                     await SecureStore.setItemAsync('user_token',newToken);
-                    store.dispatch(updateToken({ newToken }));
+
+                    if (store !== undefined && store != null)
+                    {
+                        store.dispatch(updateToken({ newToken }));
+                    }
+
                     processQueue(null,newToken);
                     originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
@@ -112,15 +127,15 @@ APIClient.interceptors.response.use(
         }
         else if (status === 403)
         {
-            Alert.alert("Access Denied", "You do not have permission to view this.");
+            Alert.alert("Access Denied","You do not have permission to view this.");
         }
         else if (status === 404)
         {
-            Alert.alert("Server Error", "Encountered an internal server error!");
+            Alert.alert("Server Error","Encountered an internal server error!");
         }
         else if (status === 500)
         {
-            Alert.alert("Network Error", "Please check your internet connection.");
+            Alert.alert("Network Error","Please check your internet connection.");
         }
 
         return Promise.reject(error);

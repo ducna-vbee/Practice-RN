@@ -1,7 +1,12 @@
 import APIClient from "@/api/client";
 import { ReqResAPIKey } from "@/env";
+import { AxiosResponse } from "axios";
 import * as SecureStore from 'expo-secure-store';
 
+export interface Profile
+{
+
+};
 
 export const authenticationService = {
     signUp: async(email: string,password: string,age: number,type: string) => {
@@ -44,8 +49,8 @@ export const authenticationService = {
             return ("Error during sign out:" + error);
         }
     },
-    getProfile: async() => {
-        const response = await APIClient.get("/profile");
+    getProfile: async(): Promise<any> => {
+        const response: AxiosResponse<Profile> = await APIClient.get("/profile");
 
         return response.data;
     },

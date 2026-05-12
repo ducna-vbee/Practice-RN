@@ -3,10 +3,13 @@ import React from "react";
 import { StyleSheet,Text,TouchableOpacity,View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+
 const Network = () => {
     const [loadingPercentage,setLoadingPercentage] = React.useState(0);
+    const [feedbackState,setFeedbackState] = React.useState<boolean>(false);
+    const [readState,setReadState] = React.useState<boolean>(false);
 
-   async function uploadData(data: any,uri: string)
+    async function uploadData(data: any,uri: string)
     {
         return networkService.post(uri,data,{
             onUploadProgress: (progressEvent) => {
@@ -24,10 +27,25 @@ const Network = () => {
                 setLoadingPercentage(loadingPercentage / 100);
             },
             timeout: 5000,
+            maxRate: [
+                100 * 1024,
+                50 * 1024
+            ],
         });
+
+        setReadState(false);
         
         return response.data;
     };
+
+    async function sendFeedback()
+    {
+        const response = await networkService.post("/feedback",{
+            timeOut: 5000,
+        });
+
+        return response.data;
+    }
 
     return (
         <SafeAreaView
@@ -97,8 +115,20 @@ const Network = () => {
                         style={{
                             ...Styles.button,
                             ...{
-
+                                backgroundColor: (feedbackState === true) ? "#00ff0d" : "#ff0000"
                             },
+                        }}
+                        onPress={async () => {
+                            try
+                            {
+                                setFeedbackState(prev => !prev);
+                                await sendFeedback();
+                            }
+                            catch
+                            {
+                                alert("Something was wrong with the feedback!");
+                                setFeedbackState(prev => !prev);
+                            }
                         }}
                     >
                         <Text
@@ -108,17 +138,18 @@ const Network = () => {
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
                             }}
-                        >{"FETCH"}</Text>
+                        >{"FEEDBACK"}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={{
                             ...Styles.button,
                             ...{
-
+                                backgroundColor: (readState === true) ? "#00ff0d" : "#ff0000"
                             },
                         }}
                         onPress={async() => {
                             setLoadingPercentage(0);
+                            setReadState(true);
                             //const response = await downloadData("https://api.jsons.live/Amazon/1-level/10-MB/minified");
                             const response = await downloadData("https://httpbin.org/status/404");
                             //console.log(response);
@@ -132,7 +163,7 @@ const Network = () => {
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
                             }}
-                        >{"AXIOS"}</Text>
+                        >{"READ"}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

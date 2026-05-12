@@ -119,7 +119,7 @@ export const signUserOut = createAsyncThunk('user/logut',async (_,thunkAPI) => {
 
 export const updateToken = createAsyncThunk("user/update-token",async ({ newToken }: { newToken: string }, thunkAPI) => {
         return {
-            token: newToken
+            token: newToken,
         };
     }
 );

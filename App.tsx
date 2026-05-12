@@ -17,6 +17,7 @@ import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { initializeStore } from "./api/client";
 import { Colors } from './constants/theme';
 import ScreenDimensionContext from './contexts/ScreenDimensionContext';
 import SettingsContext from './contexts/SettingsContext';
@@ -258,6 +259,7 @@ const MainLayout = () => {
 	},[darkModeUsage]);
 
 	React.useEffect(() => {
+		initializeStore(store);
 		registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
 		const lastResponse = Notifications.getLastNotificationResponse();
 
