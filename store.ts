@@ -11,7 +11,8 @@ import {
 } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import { userSaga } from './saga/userSaga';
-import userReducer from "./slices//UserSlice";
+import settingReducer from "./slices/SettingSlice";
+import userReducer from "./slices/UserSlice";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -31,12 +32,13 @@ const persistConfig = {
     key: 'root',
     keyPrefix: 'react_native_redux_persist_',
     storage: reduxPersistSecureStorage,
-    whitelist: ['user'],
+    whitelist: ['user','settings'],
     blacklist: ['loading','error'],
 };
 
 const rootReducer = combineReducers({
     user: userReducer,
+    settings: settingReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig,rootReducer);

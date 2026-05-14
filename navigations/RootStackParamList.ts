@@ -9,6 +9,7 @@ type RootStackParamList = {
     MutableContextView: undefined;
     Settings: undefined;
     CustomNavigationTab: undefined;
+    DeleteAccount: undefined;
 };
 
 export default RootStackParamList;

@@ -79,4 +79,29 @@ export const authenticationService = {
 
         return response.data;
     },
+    requestDeleteAccount: async(email: string) => {
+        const response = await APIClient.post("/request-delete",{
+            email: email,
+        },{
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': ReqResAPIKey,
+            }
+        });
+
+        return response.data;
+    },
+    performAccountDeletion: async(sessionID: string,reason: string) => {
+        const response = await APIClient.post("/confirm-delete",{
+            session_id: sessionID,
+            reason: reason,
+        },{
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': ReqResAPIKey,
+            }
+        });
+
+        return response.data;
+    },
 };

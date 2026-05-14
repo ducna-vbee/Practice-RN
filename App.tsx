@@ -15,7 +15,7 @@ import * as Notifications from 'expo-notifications';
 import React from 'react';
 import { Platform,StatusBar,Text,useWindowDimensions,View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
+import { Provider,useDispatch,useSelector } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { initializeStore } from "./api/client";
 import { Colors } from './constants/theme';
@@ -31,6 +31,7 @@ import ResetPassword from "./screens/ResetPassword";
 import Settings from './screens/Settings';
 import SignIn from './screens/SignIn';
 import SignUp from "./screens/SignUp";
+import { selectNetworkActivity,setNetworkActivity } from "./slices/SettingSlice";
 import { persistor,store,useAppSelector } from './store';
 
 
@@ -366,21 +367,22 @@ const MainLayout = () => {
 };
 
 const App = () => {
-	const [offlineState,setOfflineState] = React.useState(false);
+	const dispatch = useDispatch();
+	const networkActivity = useSelector(selectNetworkActivity);
 
 	React.useEffect(() => {
 		const unsubscribe = NetInfo.addEventListener(state => {
-			setOfflineState(!state.isConnected);
+			dispatch(setNetworkActivity(!!state.isConnected));
 		});
 
 		return () => unsubscribe();
-	},[]);
+	},[dispatch]);
 
 	return (
 		<SafeAreaProvider>
 			<ErrorBoundary>
 				<PersistGate loading={null} persistor={persistor}>
-					{(offlineState === false) ? (
+					{(networkActivity === true) ? (
 						<Provider store={store}>
 							<MainLayout />
 						</Provider>

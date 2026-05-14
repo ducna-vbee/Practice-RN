@@ -1,6 +1,8 @@
 /* eslint-disable import/no-named-as-default-member */
 import { BaseURL } from "@/env";
+import { store } from "@/store";
 import axios,{ InternalAxiosRequestConfig } from "axios";
+import { selectNetworkActivity } from "../slices/SettingSlice";
 
 
 const networkService = axios.create({
@@ -34,20 +36,21 @@ const networkService = axios.create({
 	},
 });
 
-let abortController: AbortController | null = null;
-let mapOfUniqueRequests = new Map<string,Promise<InternalAxiosRequestConfig<any>>>();
+let GlobalAbortController: AbortController | null = null;
+let AapOfUniqueRequests = new Map<string,Promise<InternalAxiosRequestConfig<any>>>();
+let QueueOfOfflineRequests = new Array<InternalAxiosRequestConfig<any>>();
 
 networkService.interceptors.request.use(async (config) => {
 	console.log("Propagated request 1");
 
-	// if (abortController != null)
+	// if (GlobalAbortController != null)
 	// {
-	// 	abortController.abort();
+	// 	GlobalAbortController.abort();
 	// 	console.log("🛑 Cancelled previous pending request");
 	// }
 
-	// abortController = new AbortController();
-	// config.signal = abortController.signal;
+	// GlobalAbortController = new AbortController();
+	// config.signal = GlobalAbortController.signal;
 	// console.log(config);
 
 	config.data = {
@@ -66,10 +69,27 @@ networkService.interceptors.request.use(async (config) => {
 
 networkService.interceptors.request.use(async (config) => {
 	console.log("Propagated request 2");
+	let networkActivity = selectNetworkActivity(store.getState());
 
-	if (config.url === "/feedback")
+	if (networkActivity === false)
 	{
+		QueueOfOfflineRequests.push(config);
+		const abortController = new AbortController();
+		config.signal = abortController.signal;
+		abortController.abort("User is offline");
 
+		return config;
+	}
+	else
+	{
+		if (QueueOfOfflineRequests.length > 0)
+		{
+			QueueOfOfflineRequests.map((request: InternalAxiosRequestConfig<any>) => {
+				const abortController = new AbortController();
+				request.signal = abortController.signal;
+				networkService.request(request);
+			});
+		}
 	}
 
 	return config;
@@ -80,22 +100,22 @@ networkService.interceptors.request.use(async (config) => {
 });
 
 networkService.interceptors.request.use(async (config) => {
-    console.log("Propagated request 3");
-    const requestKey = `${config.method}:${config.url}`;
+	console.log("Propagated request 3");
+	const requestKey = `${config.method}:${config.url}`;
 
-    if (mapOfUniqueRequests.has(requestKey) === true)
+	if (AapOfUniqueRequests.has(requestKey) === true)
 	{
-        console.log("♻️ Returning existing promise for", requestKey);
+		console.log("♻️ Returning existing promise for",requestKey);
 
-        return mapOfUniqueRequests.get(requestKey) as Promise<InternalAxiosRequestConfig<any>>;
-    }
+		return AapOfUniqueRequests.get(requestKey) as Promise<InternalAxiosRequestConfig<any>>;
+	}
 
-    const configPromise = Promise.resolve(config);
-    mapOfUniqueRequests.set(requestKey,configPromise);
+	const configPromise = Promise.resolve(config);
+	AapOfUniqueRequests.set(requestKey,configPromise);
 
-    return configPromise; 
-}, (error) => {
-    return Promise.reject(error);
+	return configPromise;
+},(error) => {
+	return Promise.reject(error);
 });
 
 networkService.interceptors.response.use(null,async (error) => {
