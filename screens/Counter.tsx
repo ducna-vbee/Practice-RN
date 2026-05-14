@@ -1,3 +1,4 @@
+import APIClient from "@/api/client";
 import ThemeContext from "@/contexts/ThemeContext";
 import { selectAuthenticatedStatus } from "@/slices/UserSlice";
 import { useAppSelector } from "@/store";
@@ -174,7 +175,7 @@ const Counter = () => {
 
 		const unsubscribeBlur = navigator.addListener('blur',() => {
 			console.log('Screen is background - Pause Timer');
-		});	
+		});
 
 		return () => {
 			unsubscribeFocus();
@@ -384,7 +385,7 @@ const Counter = () => {
 					paddingTop: 8,
 					paddingBottom: 8,
 				}}
-				onPress={async() => {
+				onPress={async () => {
 					await schedulePushNotification();
 				}}
 			>
@@ -405,7 +406,11 @@ const Counter = () => {
 					paddingBottom: 8,
 				}}
 				onPress={() => {
-					setCrashingState(true);
+					//setCrashingState(true);
+					console.log("🔥 Firing 3 requests at once...");
+					APIClient.get('/profile');
+					APIClient.get('/settings');
+					APIClient.get('/notifications');
 				}}
 			>
 				<Text
@@ -416,7 +421,7 @@ const Counter = () => {
 				>{"Crash"}</Text>
 			</TouchableOpacity>
 			{(crashingState === true) ? (
-				<ErrorTrigger/>
+				<ErrorTrigger />
 			) : (
 				<View></View>
 			)}

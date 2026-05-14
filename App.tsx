@@ -198,11 +198,22 @@ const MainLayout = () => {
 	const [expoPushToken,setExpoPushToken] = React.useState('');
 	const [channels,setChannels] = React.useState<Notifications.NotificationChannel[]>([]);
 	const [notification,setNotification] = React.useState<Notifications.Notification | undefined>(undefined);
+	const dispatch = useDispatch();
+	const networkActivity = useAppSelector((state) => state.settings.networkActivity);
+
+	React.useEffect(() => {
+		const unsubscribe = NetInfo.addEventListener(state => {
+			dispatch(setNetworkActivity(!!state.isConnected));
+		});
+
+		return () => unsubscribe();
+	},[dispatch]);
 
 	function useNotifications() {
 		const navigation = useNavigation();
 		const notificationListener = React.useRef<any>(null);
 		const responseListener = React.useRef<any>(null);
+		const networkActivity = useSelector(selectNetworkActivity);
 
 		React.useEffect(() => {
 			notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -293,99 +304,74 @@ const MainLayout = () => {
 						setTabBarHiddenState: setTabBarHiddenState,
 					}}
 				>
-					<StatusBar
-						animated={true}
-						//hidden={true}
-						translucent={true}
-						backgroundColor={'transparent'}
-						barStyle={'dark-content'}
-					/>
-					<View
-						style={{
-							position: 'absolute',
-							top: -1.0 * statusBarHeight,
-							left: 0,
-							right: 0,
-							bottom: 0,
-						}}
-					>
-						<NavigationContainer
-							linking={ListenerLinking}
-						>
-							{(token !== null) ? (
-								<ApplicationScreenNavigationStack.Navigator
-									initialRouteName="ApplicationNavigationDrawer"
-								>
-									<ApplicationScreenNavigationStack.Screen
-										name="ApplicationNavigationDrawer"
-										component={ApplicationNavigationDrawer}
-										options={{
-											headerShown: false,
-										}}
-									/>
-									<ApplicationScreenNavigationStack.Screen
-										name="AdditionalNavigationBottomTab"
-										component={AdditionalNavigationBottomTab}
-										options={{
-											headerShown: false,
-										}}
-									/>
-								</ApplicationScreenNavigationStack.Navigator>
-							) : (
-								<ApplicationScreenNavigationStack.Navigator
-									initialRouteName="SignIn"
-								>
-									<ApplicationScreenNavigationStack.Screen
-										name="SignUp"
-										component={SignUp}
-										options={{
-											headerShown: false,
-										}}
-									/>
-									<ApplicationScreenNavigationStack.Screen
-										name="SignIn"
-										component={SignIn}
-										options={{
-											headerShown: false,
-										}}
-									/>
-									<ApplicationScreenNavigationStack.Screen
-										name="ResetPassword"
-										component={ResetPassword}
-										options={{
-											headerShown: false,
-										}}
-									/>
-								</ApplicationScreenNavigationStack.Navigator>
-							)}
-						</NavigationContainer>
-					</View>
-				</ThemeContext.Provider>
-			</ScreenDimensionContext.Provider>
-		</SettingsContext.Provider>
-	);
-};
-
-const App = () => {
-	const dispatch = useDispatch();
-	const networkActivity = useSelector(selectNetworkActivity);
-
-	React.useEffect(() => {
-		const unsubscribe = NetInfo.addEventListener(state => {
-			dispatch(setNetworkActivity(!!state.isConnected));
-		});
-
-		return () => unsubscribe();
-	},[dispatch]);
-
-	return (
-		<SafeAreaProvider>
-			<ErrorBoundary>
-				<PersistGate loading={null} persistor={persistor}>
 					{(networkActivity === true) ? (
-						<Provider store={store}>
-							<MainLayout />
-						</Provider>
+						<View
+							style={{
+								position: 'absolute',
+								top: -1.0 * statusBarHeight,
+								left: 0,
+								right: 0,
+								bottom: 0,
+							}}
+						>
+							<StatusBar
+								animated={true}
+								//hidden={true}
+								translucent={true}
+								backgroundColor={'transparent'}
+								barStyle={'dark-content'}
+							/>
+							<NavigationContainer
+								linking={ListenerLinking}
+							>
+								{(token !== null) ? (
+									<ApplicationScreenNavigationStack.Navigator
+										initialRouteName="ApplicationNavigationDrawer"
+									>
+										<ApplicationScreenNavigationStack.Screen
+											name="ApplicationNavigationDrawer"
+											component={ApplicationNavigationDrawer}
+											options={{
+												headerShown: false,
+											}}
+										/>
+										<ApplicationScreenNavigationStack.Screen
+											name="AdditionalNavigationBottomTab"
+											component={AdditionalNavigationBottomTab}
+											options={{
+												headerShown: false,
+											}}
+										/>
+									</ApplicationScreenNavigationStack.Navigator>
+								) : (
+									<ApplicationScreenNavigationStack.Navigator
+										initialRouteName="SignIn"
+									>
+										<ApplicationScreenNavigationStack.Screen
+											name="SignUp"
+											component={SignUp}
+											options={{
+												headerShown: false,
+											}}
+										/>
+										<ApplicationScreenNavigationStack.Screen
+											name="SignIn"
+											component={SignIn}
+											options={{
+												headerShown: false,
+											}}
+										/>
+										<ApplicationScreenNavigationStack.Screen
+											name="ResetPassword"
+											component={ResetPassword}
+											options={{
+												headerShown: false,
+											}}
+										/>
+									</ApplicationScreenNavigationStack.Navigator>
+								)}
+							</NavigationContainer>
+						</View>
 					) : (
 						<View
 							style={{
@@ -408,6 +394,21 @@ const App = () => {
 							>{"No Internet Connection"}</Text>
 						</View>
 					)}
+				</ThemeContext.Provider>
+			</ScreenDimensionContext.Provider>
+		</SettingsContext.Provider>
+	);
+};
+
+const App = () => {
+
+	return (
+		<SafeAreaProvider>
+			<ErrorBoundary>
+				<PersistGate loading={null} persistor={persistor}>
+					<Provider store={store}>
+						<MainLayout />
+					</Provider>
 				</PersistGate>
 			</ErrorBoundary>
 		</SafeAreaProvider>

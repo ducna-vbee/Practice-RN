@@ -28,15 +28,18 @@ export const initializeStore = (_store: any) => {
     store = _store;
 };
 
-function processQueue(error: any,token: string | null = null) {
+function processQueue(error: any,token: string | null = null)
+{
     failedResponseQueue.forEach(element => {
         if (error != null)
         {
             element.reject(error);
+            console.log("🚀 Reject done. Re-executing queue...");
         }
         else
         {
             element.resolve(token);
+            console.log("🚀 Refresh done. Re-executing queue...");
         }
     });
     failedResponseQueue = [];
@@ -74,20 +77,23 @@ APIClient.interceptors.response.use(
         }
         else if (status === 401)
         {
+            console.log("⚠️ 401 caught. Starting refresh flow...");
             const userToken = await SecureStore.getItemAsync('user_token');
 
             if (userToken !== null && originalRequest.retry === undefined)
             {
                 if (userTokenRefreshState === true)
                 {
+                    console.log("⏳ Refresh in progress. Queuing request:", originalRequest.url);
+
                     return new Promise((resolve,reject) => {
                         failedResponseQueue.push({ resolve,reject });
                     })
-                        .then((token) => {
-                            originalRequest.headers.Authorization = `Bearer ${token}`;
-                            return APIClient(originalRequest);
-                        })
-                        .catch(error => Promise.reject(error));
+                    .then((token) => {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        return APIClient(originalRequest);
+                    })
+                    .catch(error => Promise.reject(error));
                 }
 
                 originalRequest.retry = true;
