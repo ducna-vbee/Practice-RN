@@ -5,7 +5,8 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
 
-interface ResponseResolveCallback {
+interface ResponseResolveCallback
+{
     resolve: (value: any) => void,
     reject: (reason: any) => void,
 };
@@ -61,7 +62,7 @@ APIClient.interceptors.request.use(
 );
 
 APIClient.interceptors.response.use(
-    response => response,
+    (response) => response,
     async (error) => {
         const status = error.response ? error.response.status : null;
         const originalRequest = error.config;

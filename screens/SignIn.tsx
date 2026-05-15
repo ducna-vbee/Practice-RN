@@ -45,6 +45,27 @@ const SignIn = () => {
         return unsubscribe;
     },[navigator]);
 
+    async function performSigningIn()
+    {
+        if (!email || !password)
+        {
+            setSignInMessage("Fields cannot be empty!"); 
+            return;
+        }
+        else
+        {
+            try
+            {
+                await dispatcher(signUserIn({ email,password })).unwrap();
+                setSignInMessage("Signed in successfully!");
+            }
+            catch
+            {
+                setSignInMessage("Invalid credential(s)!");
+            }
+        }
+    }
+
     return (
         <SafeAreaView
             style={{
@@ -183,33 +204,26 @@ const SignIn = () => {
                             //     console.log(error);
                             //     setSignInMessage("Invalid credential(s)!");
                             // }
-                            try
-                            {
-                               await dispatcher(signUserIn({ email,password })).unwrap();
-                                setSignInMessage("Signed in successfully!");
-                            }
-                            catch
-                            {
-                                setSignInMessage("Invalid credential(s)!");
-                            }
+                            performSigningIn();
                         }}
                     >
                         {(loading === true) ? (
-                            <ActivityIndicator
-                                color={'#FFFFFF'}
+                            <View
                                 style={{
-                                    position: 'absolute',
-                                    marginLeft: 10,
+                                    flexDirection: 'row',
                                 }}
-                            />
+                            >
+                                <ActivityIndicator
+                                    color={'#FFFFFF'}
+                                />
+                                <Text
+                                    style={Styles.buttonLabel}
+                                > {"Authenticating..."}</Text>
+                            </View>
                         ) : (
                             <Text
-                                style={{
-                                    fontSize: 18,
-                                    color: '#FFFFFF',
-                                    textTransform: 'uppercase',
-                                }}
-                            >{"SIGN IN"}</Text>
+                                style={Styles.buttonLabel}
+                            >{signInMessage.includes("success") ? "WELCOME!" : "SIGN IN"}</Text>
                         )}
                     </TouchableOpacity>
                 </View>
@@ -265,7 +279,12 @@ const Styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 1000,
         paddingLeft: 16,
-    }
+    },
+    buttonLabel: {
+        fontSize: 18,
+        color: '#FFFFFF',
+        textTransform: 'uppercase',
+    },
 });
 
 export default SignIn;

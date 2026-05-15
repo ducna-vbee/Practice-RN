@@ -1,4 +1,3 @@
-import APIClient from "@/api/client";
 import ThemeContext from "@/contexts/ThemeContext";
 import { selectAuthenticatedStatus } from "@/slices/UserSlice";
 import { useAppSelector } from "@/store";
@@ -406,11 +405,11 @@ const Counter = () => {
 					paddingBottom: 8,
 				}}
 				onPress={() => {
-					//setCrashingState(true);
-					console.log("🔥 Firing 3 requests at once...");
-					APIClient.get('/profile');
-					APIClient.get('/settings');
-					APIClient.get('/notifications');
+					setCrashingState(true);
+					// console.log("🔥 Firing 3 requests at once...");
+					// APIClient.get('/profile');
+					// APIClient.get('/settings');
+					// APIClient.get('/notifications');
 				}}
 			>
 				<Text

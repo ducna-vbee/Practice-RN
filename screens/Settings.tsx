@@ -3,7 +3,7 @@ import AuthContext from "@/contexts/AuthContext";
 import SettingsContext from "@/contexts/SettingsContext";
 import RootStackParamList from "@/navigations/RootStackParamList";
 import { authenticationService } from "@/services/authenticationService";
-import { signUserOut } from "@/slices/UserSlice";
+import { signUserOut,updateLastLoginTime } from "@/slices/UserSlice";
 import { RootState,useAppDispatch,useAppSelector } from "@/store";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -27,9 +27,8 @@ const Settings = () => {
         setPassword,
     } = React.useContext(AuthContext);
 
-    const lastSignOutTime = useSelector((state: RootState) => state.user.lastLogoutTime);
+    const lastSignInTime = useSelector((state: RootState) => state.user.lastLoginTime);
     const email = useAppSelector((state) => state.user.email);
-    const dispatcher = useAppDispatch();
 
     async function handleSignOut()
     {
@@ -117,8 +116,30 @@ const Settings = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    gap: 10,
                 }}
             >
+                <TouchableOpacity
+                    style={{
+                        borderWidth: 2,
+                        borderColor: '#0F0F0F',
+                        borderRadius: 1000,
+                        paddingLeft: 16,
+                        paddingRight: 16,
+                        paddingTop: 8,
+                        paddingBottom: 8,
+                    }}
+                    onPress={() => {
+                        dispatch(updateLastLoginTime());
+                    }}
+                >
+                    <Text
+                        style={{
+                            color: '#0F0F0F',
+                            fontSize: 16,
+                        }}
+                    >{"Update Login Timestamp"}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={{
                         borderWidth: 2,
@@ -158,7 +179,7 @@ const Settings = () => {
                     }}
                     onPress={() => {
                         handleSignOut();
-                        dispatcher(signUserOut());
+                        dispatch(signUserOut());
                     }}
                 >
                     <Text
@@ -173,7 +194,7 @@ const Settings = () => {
                     style={{
                         fontSize: 16,
                     }}
-                >{"Last logout time: "}{lastSignOutTime}</Text>
+                >{"Last login time: "}{lastSignInTime}</Text>
             </View>
         </View>  
     );

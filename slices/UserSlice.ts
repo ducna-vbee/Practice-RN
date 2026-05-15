@@ -185,7 +185,10 @@ const UserSlice = createSlice({
         },
         clearDeletionSession: (state) => {
             state.deletionSession = initialState.deletionSession;
-        }
+        },
+        updateLastLoginTime: (state) => {
+            state.lastLoginTime = (new Date()).toISOString();
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(signUserUp.pending,(state) => {
@@ -254,5 +257,5 @@ const UserSlice = createSlice({
     },
 });
 
-export const { handleLogin,handleLogout,setDeletionSession,updateDeletionTimer,clearDeletionSession } = UserSlice.actions;
+export const { handleLogin,handleLogout,setDeletionSession,updateDeletionTimer,clearDeletionSession,updateLastLoginTime } = UserSlice.actions;
 export default UserSlice.reducer;
