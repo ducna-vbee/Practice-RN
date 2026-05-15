@@ -5,8 +5,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Alert } from 'react-native';
 
-interface ResponseResolveCallback
-{
+interface ResponseResolveCallback {
     resolve: (value: any) => void,
     reject: (reason: any) => void,
 };
@@ -28,8 +27,7 @@ export const initializeStore = (_store: any) => {
     store = _store;
 };
 
-function processQueue(error: any,token: string | null = null)
-{
+function processQueue(error: any,token: string | null = null) {
     failedResponseQueue.forEach(element => {
         if (error != null)
         {
@@ -42,6 +40,7 @@ function processQueue(error: any,token: string | null = null)
             console.log("🚀 Refresh done. Re-executing queue...");
         }
     });
+
     failedResponseQueue = [];
 }
 
@@ -77,58 +76,60 @@ APIClient.interceptors.response.use(
         }
         else if (status === 401)
         {
-            console.log("⚠️ 401 caught. Starting refresh flow...");
-            const userToken = await SecureStore.getItemAsync('user_token');
-
-            if (userToken !== null && originalRequest.retry === undefined)
+            if (userTokenRefreshState === true)
             {
-                if (userTokenRefreshState === true)
-                {
-                    console.log("⏳ Refresh in progress. Queuing request:", originalRequest.url);
+                console.log("⏳ Refresh in progress. Queuing request:",originalRequest.url);
 
-                    return new Promise((resolve,reject) => {
-                        failedResponseQueue.push({ resolve,reject });
-                    })
-                    .then((token) => {
-                        originalRequest.headers.Authorization = `Bearer ${token}`;
-                        return APIClient(originalRequest);
-                    })
-                    .catch(error => Promise.reject(error));
-                }
-
-                originalRequest.retry = true;
-                userTokenRefreshState = true;
-
-                try
-                {
-                    const localAxios = axios.create({
-                        baseURL: BaseURL,
-                    });
-                    const response = await localAxios.post("/refresh-token",{ old_token: userToken });
-                    const newToken = (response.data)['user_token'];
-                    await SecureStore.setItemAsync('user_token',newToken);
-
-                    if (store !== undefined && store != null)
-                    {
-                        store.dispatch(updateToken({ newToken }));
-                    }
-
-                    processQueue(null,newToken);
-                    originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                return new Promise((resolve,reject) => {
+                    failedResponseQueue.push({ resolve,reject });
+                })
+                .then((token) => {
+                    originalRequest.headers.Authorization = `Bearer ${token}`;
 
                     return APIClient(originalRequest);
-                }
-                catch (refreshError)
-                {
-                    processQueue(refreshError,null);
-                    await SecureStore.deleteItemAsync('user_token');
+                })
+                .catch((error) => Promise.reject(error));
+            }
 
-                    return Promise.reject(refreshError);
-                }
-                finally
+            userTokenRefreshState = true;
+            console.log("⚠️ 401 caught. Starting refresh flow...");
+            originalRequest.retry = true;
+
+            try
+            {
+                const userToken = await SecureStore.getItemAsync('user_token');
+
+                const localAxios = axios.create({
+                    baseURL: BaseURL,
+                });
+
+                const response = await localAxios.post("/refresh-token",{
+                    old_token: userToken,
+                });
+
+                const newToken = (response.data)['user_token'];
+                await SecureStore.setItemAsync('user_token',newToken);
+
+                if ((store !== undefined) && (store != null))
                 {
-                    userTokenRefreshState = false;
+                    store.dispatch(updateToken({ newToken }));
                 }
+
+                processQueue(null,newToken);
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+                return APIClient(originalRequest);
+            }
+            catch (refreshError)
+            {
+                processQueue(refreshError,null);
+                await SecureStore.deleteItemAsync('user_token');
+
+                return Promise.reject(refreshError);
+            }
+            finally
+            {
+                userTokenRefreshState = false;
             }
         }
         else if (status === 403)
